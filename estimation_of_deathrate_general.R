@@ -1,6 +1,6 @@
 #Estimation of death rate of daphnias, depending on their age: delta(age)
 
-#TODO: try to plot likelihood and read the optimizing parameters from the graph
+#TODO: #instead of delta put in the right probability of dying at age longevity[i], read on it in the book
 
 #Libraries
 library(foreign)   #to read the spss file
@@ -66,15 +66,10 @@ for (x in 0:lifetime_threshold) {
 #Likelihood function (log_likelihood) = log(Pruduct over individuals (Product over timesteps(probability of dying in that timestep))) -> log turns pruducts to sums
 likelihood_general <- function(parameters, longevity){
   likelihood_local <- 0
-  if(max(delta(parameters, age_axis))<1 & min(delta(parameters, age_axis))>=0){
-      
+  if(min(delta(parameters, age_axis))>=0){
       #does the binomial factor play any role in the likelihood? It does not, right? Since under the logarithm it only plays role of additive constant (independent of delta)
       for (i in 1:length(longevity)) {
-        for (a in 1:(longevity[i]-1)) {
-          likelihood_local <- likelihood_local + log(1-delta(parameters, a))
-        }
-        
-        likelihood_local <- likelihood_local + log(delta(parameters, longevity[i]))
+        likelihood_local <- likelihood_local -sum(delta(parameters, age_axis[1:longevity[i]])) + log(delta(parameters,longevity[i])) #instead of delta put in the right probability of dying at age longevity[i]
       }
   
     }else{
@@ -83,6 +78,7 @@ likelihood_general <- function(parameters, longevity){
   
   return(-(likelihood_local + log(factorial(length(longevity))))) #optim is minimizing, so we return sign flipped value to get maximization
 }
+
 
 ######################## Optimization
 
@@ -201,8 +197,8 @@ plot_control <- plot(age_axis, survivals_control, col="blue", xlab = "Age [days]
 lines(age_axis, survival_model(delta = delta_values_control_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_control_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_control_cubic), col="yellow")
-lines(age_axis, survival_model(delta = delta_values_control_quartic), col="orange")
-legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "orange"), lty = 1)
+lines(age_axis, survival_model(delta = delta_values_control_quartic), col="purple")
+legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
 dev.off()
 
 pdf("Infected_population_survival.pdf")
@@ -210,8 +206,8 @@ plot_infecteds <- plot(age_axis, survivals_infecteds, col="blue", xlab = "Age [d
 lines(age_axis, survival_model(delta = delta_values_infecteds_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_infecteds_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_infecteds_cubic), col="yellow")
-lines(age_axis, survival_model(delta = optimized_parameters_infecteds_quartic), col="orange")
-legend(70,1, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "orange"), lty = 1)
+lines(age_axis, survival_model(delta = optimized_parameters_infecteds_quartic), col="purple")
+legend(70,1, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
 dev.off()
 
 
@@ -220,8 +216,8 @@ plot_exposed <- plot(age_axis, survivals_exposed, col="blue", xlab = "Age [days]
 lines(age_axis, survival_model(delta = delta_values_exposed_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_exposed_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_exposed_cubic), col="yellow")
-lines(age_axis, survival_model(delta = delta_values_exposed_quartic), col="orange")
-legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "orange"), lty = 1)
+lines(age_axis, survival_model(delta = delta_values_exposed_quartic), col="purple")
+legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
 dev.off()
 
 #plotting delta, for different populations

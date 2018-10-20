@@ -197,8 +197,8 @@ plot_control <- plot(age_axis, survivals_control, col="blue", xlab = "Age [days]
 lines(age_axis, survival_model(delta = delta_values_control_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_control_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_control_cubic), col="yellow")
-lines(age_axis, survival_model(delta = delta_values_control_quartic), col="orange")
-legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "orange"), lty = 1)
+lines(age_axis, survival_model(delta = delta_values_control_quartic), col="purple")
+legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
 dev.off()
 
 pdf("Infected_population_survival.pdf")
@@ -206,8 +206,8 @@ plot_infecteds <- plot(age_axis, survivals_infecteds, col="blue", xlab = "Age [d
 lines(age_axis, survival_model(delta = delta_values_infecteds_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_infecteds_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_infecteds_cubic), col="yellow")
-lines(age_axis, survival_model(delta = optimized_parameters_infecteds_quartic), col="orange")
-legend(70,1, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "orange"), lty = 1)
+lines(age_axis, survival_model(delta = optimized_parameters_infecteds_quartic), col="purple")
+legend(70,1, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
 dev.off()
 
 
@@ -216,8 +216,8 @@ plot_exposed <- plot(age_axis, survivals_exposed, col="blue", xlab = "Age [days]
 lines(age_axis, survival_model(delta = delta_values_exposed_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_exposed_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_exposed_cubic), col="yellow")
-lines(age_axis, survival_model(delta = delta_values_exposed_quartic), col="orange")
-legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "orange"), lty = 1)
+lines(age_axis, survival_model(delta = delta_values_exposed_quartic), col="purple")
+legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
 dev.off()
 
 #plotting delta, for different populations
