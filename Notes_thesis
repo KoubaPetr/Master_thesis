@@ -1,0 +1,8 @@
+Master thesis notes
+
+Meeting with Roland Friday 19.10.:
+The likelihood was wrong, instead of delta term in the likelihood,
+there should be the survival up to that point exp[-sum(delta(a))].
+
+Then do the Pi Xi Square test (likelihood ratio), check the book
+"Biometry" for this.
