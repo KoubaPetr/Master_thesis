@@ -57,9 +57,9 @@ age.model <-
       ## age every flea:
       D.new <- c(newborns,D[-length(D)])
       
-      ## dying by infection: #and also mortality on the background
+      ## dying by infection: ##### and also mortality on the background
       I <- (1-v-m)*I
-      P <- sum(v*I)
+      P <- sum(v*I) ##### rewriting the pathogens, rather incrementing, right? Or in this simple model do the pathogens live just one day in the environment?
       ## new infections:
       I.new <- b*P*f*D
       ## age every flea:

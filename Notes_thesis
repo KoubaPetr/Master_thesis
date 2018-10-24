@@ -18,6 +18,8 @@ Meeting with Roland Monday 20.10:
 
 Meeting with Roland Wednesday 24.10.:
 -death rates look moreorless good - only the quartic deltas have a peak around age = 50, check whether it is supported by the data, maybe try to fit it with exponential instead
-Now: -	look at the model provided by Roland, put in the delta for the uninfecteds, look what you 		get
+Now: -	look at the model provided by Roland, put in the delta for the uninfecteds, look what you 		get - for this get the animations fixed
      -	Maybe try to play around with the transmission and virulence to get the delta for the 		infected population based only on rhe delta of the uninfecteds
      -	Does the model reflect, that the pathogen only gets transmitted after death?
+     -  Think about the problem theoretically : done on paper!
+
