@@ -1,0 +1,192 @@
+---
+title: "An age-structured model for Frida"
+author: "Roland"
+output:
+  html_document:
+    toc: yes
+    toc_depth: 4
+    toc_float:
+      collapsed: FALSE
+      smooth_scroll: TRUE
+    code_folding: hide
+    highlight: haddock
+    number_sections: FALSE
+    df_print: kable
+---
+
+Here, we define an age-structured model to synthesize Frida's data on age-dependent host-parasite characteristics.
+
+The model works in dicretized time.
+The unit is days.
+This allows us to describe aging appropriately without making the model much more complex.
+(In continuous time, we would either need to define aging rates that lead to aging that happens faster in some individuals than in others, or we need to structure the variables and define partial differential equations, which becomes complicated to simulate and analyze.)
+
+The following function requires as input the initial age-distribution of susceptible `D` and infected `I` daphnia. The length of the input vectors indicates the number of age classes in days. It also requires the abundance of pathogens `P` in the environment. One also needs to specify the time in days when the simulation should end. 
+```{r age-model}
+age.model <-
+    function(D=c(10,rep(0,199)),
+             I=c( 2,rep(0,199)),
+             P=0, #should we simulate the transmission after death by pathogen presence in the environment?
+             t.end=150){
+
+    ## carrying capacity:
+    K <- 1000
+    
+    ## D is the daphnia vector, one entry per age group;
+    #D <- vector("numeric", length=200)
+    ## we define age groups for 200 days because daphnia can live half a year in captivity
+    
+    ## I is the infected daphnia vector, one entry per age group;
+    #I <- vector("numeric", length=200)
+    
+    # delta function corresponding to the fit for the control population in the experiment
+    
+    delta <- function(a){
+      return(4.420315e-07*a^4 - 7.621028e-05*a^3 + 3.844089e-03*a^2 - 4.674704e-02*a +  1.944348e-01)
+    }
+    
+    ## age dependent reproduction:
+    r <- c(rep(0,10),
+           3,4,5,5,5,5,5,5,5,5,
+           rep(0,180))
+    ## age dependent mortaility: computed based on the fit for control population
+    m <- delta(a = 0:199)
+    
+    ## age dependent susceptibility:
+    f <- c(rep(0.1, 5),
+           rep(0.05, 10),
+           rep(0.02, 15),
+           rep(0.02,170))
+    ## infectiousness of a burst (ie hte number of parasite spores that come out
+    ## of an infected flea at death):
+    b <- 0.1
+    ## age dependent virulence: (there was no difference between the ages in virulence, was there?)
+    v <- c(rep(0.05, 200))
+    
+#    D[1] <- 10 # starting cohort
+#    I[10] <- 2 # starting cohort infecteds
+#    P <- 0
+    output <- data.frame(t(c(0,P,D,I)))
+    names(output) <- c("day","P",
+                       paste0("D",1:length(D)),
+                       paste0("I",1:length(I)))
+    
+    for(t in 1:t.end){
+        ##cat(paste0("t=",t,"\n")) # for diagnostics
+        ## let fleas reproduce:
+        newborns <- sum(r*D)
+        ## dying:
+        D <- (1-m)*D
+        ## age every flea:
+        D.new <- c(newborns,D[-length(D)])
+
+        ## dying by infection:
+        I <- (1-v)*I
+        P <- sum(v*I)
+        ## new infections:
+        I.new <- b*P*f*D
+        ## age every flea:
+        I <- I.new + c(0,I[-length(I)])
+        
+        ## shrink to carrying capacity:
+        D <- D.new
+        if(sum(I)+sum(D) > K){
+            D <- D * K/(sum(I)+sum(D))
+            I <- I * K/(sum(I)+sum(D))
+        }
+        output <- rbind(output,
+                        c(t,P,D,I))
+    }
+    output
+}
+```
+
+Let's run this:
+```{r run-age-model, cache=F}
+am.1 <- age.model()
+```
+
+<!-- THIS LOOKS UGLY BECAUSE EVERYTHING IS ON TOP OF EACH OTHER
+Plot it:
+```{r plot-age-model}
+#library(reshape2)
+#library(magrittr)
+#library(plyr)
+#library(ggplot2)
+#
+#am.1 %>%
+#melt(id=c("day")) %>%
+#ggplot(aes(x=day,y=value)) +
+#    geom_line() +
+#        scale_y_log10(limits=c(1,1e3))
+```
+--> 
+
+
+Let's run it without infections:
+```{r run-age-model-disease-free, cache=F}
+am.0 <- age.model(D = c(10, rep(0, 199)),
+                  I = rep(0, 200),
+                  P = 0,
+                  t.end = 150)
+```
+
+Let's run the simulation starting in the disease free equilibrium and introducing a couple of infected hosts:
+```{r run-age-model-disease-free+inf, cache=F}
+am.2 <- age.model(D = c(am.0[dim(am.0)[1],3:202], recursive=T),
+                  I = c(2, rep(0, 199)),
+                  P = 0,
+                  t.end = 150)
+```
+
+
+This function animates the model:
+```{r animate-age-model-function}
+animate.age.model <- function(am=am.1){
+    require(animation)
+    ani.options(interval = 1/24, nmax = dim(am)[1]) -> aop
+    for (i in 1:ani.options("nmax")) {
+    ##for (i in 1+10*(0:30)) {
+        par(mfrow=c(1,2))->op
+        layout(t(as.matrix(c(1,2), ncol=2)),
+               widths=c(3,1), heights=c(1,1))
+        plot(1:200, am[i,203:402]+0.1,
+             xlab="Host age", ylab="Host abundance (+0.1)",
+             main = paste0("Day = ", am$day[i]),
+             type="l", lwd=3, col=2,
+             log="y", 
+             ylim=c(0.1,max(c(10,max(am[,3:402])))))
+        lines(1:200, am[i,3:202]+0.1,
+              lwd=3, col=1)
+        legend(50,50,legend=c("susceptible","infected"),
+               col=c(1,2), lwd=3, bty="n")
+        barplot(am[i,"P"]+0.1,
+                ylab="Pathogen abundance (+0.1)",
+                ylim=c(0.1,max(c(10,am$P))),
+                #log="y"  #troubles with logscale, argument was non positive
+                ) 
+        ani.pause()
+        par(op);rm(op)
+    }
+    rm(i)
+    ani.options(aop)
+}
+```
+
+Let's animate with default parameters:
+```{r animate-age-model-1, fig.show='animate', interval=1/24, aniopts="controls"}
+animate.age.model(am.1)
+```
+One can see that the age distribution becomes stable after 100 days.
+
+Let's animate without infection:
+```{r animate-age-model-0, fig.show='animate', interval=1/24, aniopts="controls"}
+animate.age.model(am.0)
+```
+Again, the age distribution becomes stable after approximately 100 days.
+
+Let's animate starting with equilibrium age distribution:
+```{r animate-age-model-2, fig.show='animate', interval=1/24, aniopts="controls"}
+animate.age.model(am.2)
+```
+You see how the susceptible are moving down slightly.

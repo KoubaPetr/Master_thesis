@@ -1,6 +1,6 @@
 #Estimation of death rate of daphnias, depending on their age: delta(age)
 
-#TODO: #instead of delta put in the right probability of dying at age longevity[i], read on it in the book
+#TODO: Plot the best fits for delta for all populations, pchisq() for testing the goodnes of our fit? - ask
 
 #Libraries
 library(foreign)   #to read the spss file
@@ -21,7 +21,9 @@ delta <- function(parameters, age){
   }else if(length(parameters) == 4){
     local_delta <- parameters[1] * age^3 + parameters[2]*age^2 + parameters[3]*age + parameters[4]
   }else if(length(parameters) == 5){
-      local_delta <- parameters[1] * age^4 + parameters[2]*age^3 + parameters[3]*age^2 + parameters[4]*age + parameters[5]
+    local_delta <- parameters[1] * age^4 + parameters[2]*age^3 + parameters[3]*age^2 + parameters[4]*age + parameters[5]
+  }else if(length(parameters) == 6){
+    local_delta <- parameters[1] * age^5 + parameters[2]*age^4 + parameters[3]*age^3 + parameters[4]*age^2 + parameters[5]*age + parameters[6]
   }
  return (local_delta)
 }
@@ -81,55 +83,158 @@ likelihood_general <- function(parameters, longevity){
 
 
 ######################## Optimization
+## current version of optimization takes ~20 mins
+const_initial = c(0.1,0.001,0.00001)
+lin_initial = c(0.1,0.001,0.00001)
+quadrat_initial = c(0.01,0.0001,0.000001)
+cubic_initial = c(0.0001,0.000001,0.00000001)
+quartic_initial = c(0.00001,0.0000001,0.000000001)
 
-#optimize likelihood w.r.t. coefficients of the polynomial, in delta
-optimized_parameters_control_quartic <- optim(c(0.0000000001, 0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$par 
-delta_values_control_quartic <- delta(optimized_parameters_control_quartic, age_axis)
-optimized_likelihood_control_quartic <-optim(c(0.0000000001, 0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$value
+optimized_likelihood_control_linear <- Inf
+optimized_likelihood_infecteds_linear <- Inf
+optimized_likelihood_exposed_linear <- Inf
 
-optimized_parameters_infecteds_quartic <- optim(c(0.0000000001, 0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$par
-delta_values_infecteds_quartic <- delta(optimized_parameters_infecteds_quartic, age_axis)
-optimized_likelihood_infecteds_quartic <-optim(c(0.0000000001, 0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$value
+optimized_likelihood_control_quadratic <- Inf
+optimized_likelihood_infecteds_quadratic <- Inf
+optimized_likelihood_exposed_quadratic <- Inf
 
-optimized_parameters_exposed_quartic <- optim(c(0.0000000001, 0.0000001, 0.000001, 0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$par
-delta_values_exposed_quartic <- delta(optimized_parameters_exposed_quartic, age_axis)
-optimized_likelihood_exposed_quartic <- optim(c(0.0000000001, 0.0000001, 0.000001, 0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$value
+optimized_likelihood_control_cubic <- Inf
+optimized_likelihood_infecteds_cubic <- Inf
+optimized_likelihood_exposed_cubic <- Inf
 
-optimized_parameters_control_cubic <- optim(c(0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$par 
-delta_values_control_cubic <- delta(optimized_parameters_control_cubic, age_axis)
-optimized_likelihood_control_cubic <- optim(c(0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$value
+optimized_likelihood_control_quartic <- Inf
+optimized_likelihood_infecteds_quartic <- Inf
+optimized_likelihood_exposed_quartic <- Inf
 
-optimized_parameters_infecteds_cubic <- optim(c(0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$par
-delta_values_infecteds_cubic <- delta(optimized_parameters_infecteds_cubic, age_axis)
-optimized_likelihood_infecteds_cubic <- optim(c(0.0000001, 0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$value
+counter <- 0
 
-optimized_parameters_exposed_cubic <- optim(c(0.0000001, 0.000001, 0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$par
-delta_values_exposed_cubic <- delta(optimized_parameters_exposed_cubic, age_axis)
-optimized_likelihood_exposed_cubic <- optim(c(0.0000001, 0.000001, 0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$value
+for (i in const_initial) {
+  
+  for (j in lin_initial){
+    counter <- counter + 1
+    message("-------------------------------------------------------------",counter, "/9","-------------------------------------------------------------")
+    
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control)$value < optimized_likelihood_control_linear){
+      optimized_parameters_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control)$par
+      optimized_likelihood_control_linear <- optim(c(j, i), fn=likelihood_general, longevity = host_longevity_control)$value
+      message("correction achieved for control population and i=",i," and j=", j)
+    }
+    
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$value < optimized_likelihood_infecteds_linear){
+      optimized_parameters_infecteds_linear <- optim(c(j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$par
+      optimized_likelihood_infecteds_linear <- optim(c(j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$value
+      message("correction achieved for infected population and i=",i," and j=", j)
+    }
+    
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_exposed)$value < optimized_likelihood_exposed_linear){
+      optimized_parameters_exposed_linear <- optim(c(j,i), fn=likelihood_general, longevity = host_longevity_exposed)$par
+      optimized_likelihood_exposed_linear <- optim(c(j,i), fn=likelihood_general, longevity = host_longevity_exposed)$value
+      message("correction achieved for exposed population and i=",i," and j=", j)
+    }
+    
+    for (k in quadrat_initial) {
+      if(optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_control)$value < optimized_likelihood_control_quadratic){
+        optimized_parameters_control_quadratic <- optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_control)$par
+        optimized_likelihood_control_quadratic <- optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_control)$value
+        message("correction achieved for control population and i=",i," and j=", j," and k=",k)
+      }
+      
+      if(optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_infecteds)$value < optimized_likelihood_infecteds_quadratic){
+        optimized_parameters_infecteds_quadratic <- optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_infecteds)$par
+        optimized_likelihood_infecteds_quadratic <- optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_infecteds)$value
+        message("correction achieved for infected population and i=",i," and j=", j," and k=",k)
+      }
+      
+      if(optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_exposed)$value < optimized_likelihood_exposed_quadratic){
+        optimized_parameters_exposed_quadratic <- optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_exposed)$par
+        optimized_likelihood_exposed_quadratic <- optim(c(k,j,i), fn=likelihood_general, longevity = host_longevity_exposed)$value
+        message("correction achieved for exposed population and i=",i," and j=", j," and k=",k)
+      }
+      
+      for (l in cubic_initial) {
+        if(optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_control)$value < optimized_likelihood_control_cubic){
+          optimized_parameters_control_cubic <- optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_control)$par
+          optimized_likelihood_control_cubic <- optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_control)$value
+          message("correction achieved for control population and i=",i," and j=", j," and k=",k," and l=",l)
+        }
+        
+        if(optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$value < optimized_likelihood_infecteds_cubic){
+          optimized_parameters_infecteds_cubic <- optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$par
+          optimized_likelihood_infecteds_cubic <- optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$value
+          message("correction achieved for infected population and i=",i," and j=", j," and k=",k," and l=",l)
+        }
+        
+        if(optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_exposed)$value < optimized_likelihood_exposed_cubic){
+          optimized_parameters_exposed_cubic <- optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_exposed)$par
+          optimized_likelihood_exposed_cubic <- optim(c(l, k, j, i), fn=likelihood_general, longevity = host_longevity_exposed)$value
+          message("correction achieved for exposed population and i=",i," and j=", j," and k=",k," and l=",l)
+        }
+        for (m in quartic_initial) {
+          if(optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_control)$value < optimized_likelihood_control_quartic){
+            optimized_parameters_control_quartic <- optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_control)$par
+            optimized_likelihood_control_quartic <-optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_control)$value
+            message("correction achieved for control population and i=",i," and j=", j," and k=",k," and l=",l," and m=",m)
+          }
+          
+          if(optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$value < optimized_likelihood_infecteds_quartic){
+            optimized_parameters_infecteds_quartic <- optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$par
+            optimized_likelihood_infecteds_quartic <-optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_infecteds)$value
+            message("correction achieved for infected population and i=",i," and j=", j," and k=",k," and l=",l," and m=",m)
+          }
+          if(optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_exposed)$value < optimized_likelihood_exposed_quartic){
+            optimized_parameters_exposed_quartic <- optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_exposed)$par
+            optimized_likelihood_exposed_quartic <- optim(c(m, l, k, j, i), fn=likelihood_general, longevity = host_longevity_exposed)$value
+            message("correction achieved for exposed population and i=",i," and j=", j," and k=",k," and l=",l,"a nd m=",m)
+          }
+        }
+      }
+    }
+  }
+}
 
-optimized_parameters_control_quadratic <- optim(c(0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$par 
-delta_values_control_quadratic <- delta(optimized_parameters_control_quadratic, age_axis)
-optimized_likelihood_control_quadratic <- optim(c(0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$value 
-
-optimized_parameters_infecteds_quadratic <- optim(c(0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$par
-delta_values_infecteds_quadratic <- delta(optimized_parameters_infecteds_quadratic, age_axis)
-optimized_likelihood_infecteds_quadratic <- optim(c(0.000001, 0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$value
-
-optimized_parameters_exposed_quadratic <- optim(c(0.000001, 0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$par
-delta_values_exposed_quadratic <- delta(optimized_parameters_exposed_quadratic, age_axis)
-optimized_likelihood_exposed_quadratic <- optim(c(0.000001, 0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$value
-
-optimized_parameters_control_linear <- optim(par = c(0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$par
 delta_values_control_linear <- delta(optimized_parameters_control_linear, age_axis)
-optimized_likelihood_control_linear <- optim(c(0.001, 0.001), fn=likelihood_general, longevity = host_longevity_control)$value
-
-optimized_parameters_infecteds_linear <- optim(c(0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$par
 delta_values_infecteds_linear <- delta(optimized_parameters_infecteds_linear, age_axis)
-optimized_likelihood_infecteds_linear <- optim(c(0.001, 0.001), fn=likelihood_general, longevity = host_longevity_infecteds)$value
-
-optimized_parameters_exposed_linear <- optim(c(0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$par
 delta_values_exposed_linear <- delta(optimized_parameters_exposed_linear, age_axis)
-optimized_likelihood_exposed_linear <- optim(c(0.001,0.001), fn=likelihood_general, longevity = host_longevity_exposed)$value
+
+delta_values_control_quadratic <- delta(optimized_parameters_control_quadratic, age_axis)
+delta_values_infecteds_quadratic <- delta(optimized_parameters_infecteds_quadratic, age_axis)
+delta_values_exposed_quadratic <- delta(optimized_parameters_exposed_quadratic, age_axis)
+
+delta_values_control_cubic <- delta(optimized_parameters_control_cubic, age_axis)
+delta_values_infecteds_cubic <- delta(optimized_parameters_infecteds_cubic, age_axis)
+delta_values_exposed_cubic <- delta(optimized_parameters_exposed_cubic, age_axis)
+
+delta_values_control_quartic <- delta(optimized_parameters_control_quartic, age_axis)
+delta_values_infecteds_quartic <- delta(optimized_parameters_infecteds_quartic, age_axis)
+delta_values_exposed_quartic <- delta(optimized_parameters_exposed_quartic, age_axis)
+
+############ TRY 5th order polynomial
+# fifth_initial <- c(0.0000001,0.000000001,0.0000000001)
+# optimized_likelihood_control_fifth_order <- Inf
+# for (i in const_initial) {
+#   
+#   for (j in lin_initial){
+#     
+#     for (k in quadrat_initial) {
+#       
+#       
+#       for (l in cubic_initial) {
+#         
+#         for (m in quartic_initial) {
+#           for (fifth in fifth_initial) {
+#             counter <- counter + 1
+#             message("-------------------------------------------------------------",counter, "/729","-------------------------------------------------------------")
+#             if(optim(par=c(fifth,optimized_parameters_control_quartic), fn=likelihood_general, longevity = host_longevity_control)$value < optimized_likelihood_control_fifth){
+#               optimized_parameters_control_fifth_order <- optim(par=c(fifth,optimized_parameters_control_quartic), fn=likelihood_general, longevity = host_longevity_control)$par
+#               optimized_likelihood_control_fifth_order <- optim(par=c(fifth,optimized_parameters_control_quartic), fn=likelihood_general, longevity = host_longevity_control)$value
+#             }
+#           }
+#         }
+#       }
+#     }
+#   }
+# }
+
 
 #check overlap with survival data
 
@@ -161,44 +266,64 @@ optimized_parameters_control_linear
 optimized_parameters_infecteds_linear
 optimized_parameters_exposed_linear
 
-#likelihood ratio test for control population
-LR_lin_vs_quadratic_control <- optimized_likelihood_control_linear/optimized_likelihood_control_quadratic
-LR_lin_vs_cubic_control <- optimized_likelihood_control_linear/optimized_likelihood_control_cubic
-LR_lin_vs_quartic_control <- optimized_likelihood_control_linear/optimized_likelihood_control_quartic
+########Likelihood Ratio Test
+LRT_control_lin_to_quadratic <- 2*(optimized_likelihood_control_linear - optimized_likelihood_control_quadratic)
+LRT_control_quadratic_to_cubic <- 2*(optimized_likelihood_control_quadratic - optimized_likelihood_control_cubic)
+LRT_control_cubic_to_quartic <- 2*(optimized_likelihood_control_cubic - optimized_likelihood_control_quartic)
+#LRT_control_quartic_to_fifth_order <- 2*(optimized_likelihood_control_quartic - optimized_likelihood_control_fifth_order)
 
-LR_lin_vs_quadratic_control
-LR_lin_vs_cubic_control
-LR_lin_vs_quartic_control
+LRT_control_lin_to_quadratic
+LRT_control_quadratic_to_cubic
+LRT_control_cubic_to_quartic
+#LRT_control_quartic_to_fifth_order
+
+LRT_infecteds_lin_to_quadratic <- 2*(optimized_likelihood_infecteds_linear - optimized_likelihood_infecteds_quadratic)
+LRT_infecteds_quadratic_to_cubic <- 2*(optimized_likelihood_infecteds_quadratic - optimized_likelihood_infecteds_cubic)
+LRT_infecteds_cubic_to_quartic <- 2*(optimized_likelihood_infecteds_cubic - optimized_likelihood_infecteds_quartic)
+LRT_infecteds_quadratic_to_quartic <- 2*(optimized_likelihood_infecteds_quadratic -optimized_likelihood_infecteds_quartic)
 
 
-#likelihood ratio test for exposed population
-LR_lin_vs_quadratic_exposed <- optimized_likelihood_exposed_linear/optimized_likelihood_exposed_quadratic
-LR_lin_vs_cubic_exposed <- optimized_likelihood_exposed_linear/optimized_likelihood_exposed_cubic
-LR_lin_vs_quartic_exposed <- optimized_likelihood_exposed_linear/optimized_likelihood_exposed_quartic
+LRT_infecteds_lin_to_quadratic
+LRT_infecteds_quadratic_to_cubic
+LRT_infecteds_cubic_to_quartic
+LRT_infecteds_quadratic_to_quartic
 
-LR_lin_vs_quadratic_exposed
-LR_lin_vs_cubic_exposed
-LR_lin_vs_quartic_exposed
+LRT_exposed_lin_to_quadratic <- 2*(optimized_likelihood_exposed_linear - optimized_likelihood_exposed_quadratic)
+LRT_exposed_quadratic_to_cubic <- 2*(optimized_likelihood_exposed_quadratic - optimized_likelihood_exposed_cubic)
+LRT_exposed_cubic_to_quartic <- 2*(optimized_likelihood_exposed_cubic - optimized_likelihood_exposed_quartic)
 
-#likelihood ratio test for infected population
-LR_lin_vs_quadratic_infecteds <- optimized_likelihood_infecteds_linear/optimized_likelihood_infecteds_quadratic
-LR_lin_vs_cubic_infecteds <- optimized_likelihood_infecteds_linear/optimized_likelihood_infecteds_cubic
-LR_lin_vs_quartic_infecteds <- optimized_likelihood_infecteds_linear/optimized_likelihood_infecteds_quartic
+LRT_exposed_lin_to_quadratic
+LRT_exposed_quadratic_to_cubic
+LRT_exposed_cubic_to_quartic
 
-LR_lin_vs_quadratic_infecteds
-LR_lin_vs_cubic_infecteds
-LR_lin_vs_quartic_infecteds
+#pchisq() test of the LR for control population
+pchisq(LRT_control_lin_to_quadratic,df = 1,lower.tail = FALSE)
+pchisq(LRT_control_quadratic_to_cubic,df = 1,lower.tail = FALSE)
+pchisq(LRT_control_cubic_to_quartic,df = 1,lower.tail = FALSE)
+#pchisq(LRT_control_cubic_to_fifth_order, df = 1, lower.tail = FALSE) #likelihood is insufficient
+
+
+#pchisq() test of the LR for infected population
+pchisq(LRT_infecteds_lin_to_quadratic,df = 1,lower.tail = FALSE)
+pchisq(LRT_infecteds_quadratic_to_cubic,df = 1,lower.tail = FALSE)
+pchisq(LRT_infecteds_cubic_to_quartic,df = 1,lower.tail = FALSE)
+pchisq(LRT_infecteds_quadratic_to_quartic, df = 2, lower.tail = FALSE)
+
+#pchisq() test of the LR for exposed population
+pchisq(LRT_exposed_lin_to_quadratic,df = 1,lower.tail = FALSE)
+pchisq(LRT_exposed_quadratic_to_cubic,df = 1,lower.tail = FALSE)
+pchisq(LRT_exposed_cubic_to_quartic,df = 1,lower.tail = FALSE)
 
 
 #plotting the survival compared to linear and quadratic model of delta
-
 pdf("Control_population_survival.pdf")
 plot_control <- plot(age_axis, survivals_control, col="blue", xlab = "Age [days]", ylab = "Survivals in control population [fraction]")
 lines(age_axis, survival_model(delta = delta_values_control_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_control_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_control_cubic), col="yellow")
 lines(age_axis, survival_model(delta = delta_values_control_quartic), col="purple")
-legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
+#lines(age_axis, survival_model(delta = delta(optimized_parameters_control_fifth_order, age = age_axis)), col="red")
+legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1, cex = 0.8)
 dev.off()
 
 pdf("Infected_population_survival.pdf")
@@ -206,8 +331,8 @@ plot_infecteds <- plot(age_axis, survivals_infecteds, col="blue", xlab = "Age [d
 lines(age_axis, survival_model(delta = delta_values_infecteds_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_infecteds_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_infecteds_cubic), col="yellow")
-lines(age_axis, survival_model(delta = optimized_parameters_infecteds_quartic), col="purple")
-legend(70,1, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
+lines(age_axis, survival_model(delta = delta_values_infecteds_quartic), col="purple")
+legend(60,1, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1, cex = 0.8)
 dev.off()
 
 
@@ -217,28 +342,39 @@ lines(age_axis, survival_model(delta = delta_values_exposed_linear), col="red")
 lines(age_axis, survival_model(delta = delta_values_exposed_quadratic), col="green")
 lines(age_axis, survival_model(delta = delta_values_exposed_cubic), col="yellow")
 lines(age_axis, survival_model(delta = delta_values_exposed_quartic), col="purple")
-legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1)
+legend(0,0.3, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("blue", "red", "green", "yellow", "purple"), lty = 1, cex = 0.8)
 dev.off()
+
+optimized_parameters_control_quadratic
+delta(optimized_parameters_control_quadratic, age_axis)
 
 #plotting delta, for different populations
 
 pdf("Quadratic_models.pdf")
-plot_deltas <- plot(age_axis, delta(optimized_parameters_control_quadratic, age_axis), xlab = "Age [days]", ylab = "Delta under quadratic approx.", col = "blue", type = "l")
+plot_deltas_quadratic <- plot(age_axis, delta(optimized_parameters_control_quadratic, age_axis), xlab = "Age [days]", ylab = "Delta under quadratic approx.", col = "blue", type = "l")
 lines(age_axis, delta(optimized_parameters_infecteds_quadratic, age_axis), col = "red")
 lines(age_axis, delta(optimized_parameters_exposed_quadratic, age_axis), col = "green")
 legend(100,0.02, legend = c("Control", 'Infected', "Exposed"), col = c("blue", "red", "green"), lty = 1)
 dev.off()
 
 pdf("Linear_models.pdf")
-plot_deltas <- plot(age_axis, delta(optimized_parameters_control_linear, age_axis), xlab = "Age [days]", ylab = "Delta under linear approx.", col = "blue", type = "l")
+plot_deltas_linear <- plot(age_axis, delta(optimized_parameters_control_linear, age_axis), xlab = "Age [days]", ylab = "Delta under linear approx.", col = "blue", type = "l")
 lines(age_axis, delta(optimized_parameters_infecteds_linear, age_axis), col = "red")
 lines(age_axis, delta(optimized_parameters_exposed_linear, age_axis), col = "green")
 legend(100,0.01, legend = c("Control", 'Infected', "Exposed"), col = c("blue", "red", "green"), lty = 1)
 dev.off()
 
 pdf("Cubic_models.pdf")
-plot_deltas <- plot(age_axis, delta(optimized_parameters_control_cubic, age_axis), xlab = "Age [days]", ylab = "Delta under cubic approx.", col = "blue", type = "l")
+plot_deltas_cubic <- plot(age_axis, delta(optimized_parameters_control_cubic, age_axis), xlab = "Age [days]", ylab = "Delta under cubic approx.", col = "blue", type = "l")
 lines(age_axis, delta(optimized_parameters_infecteds_cubic, age_axis), col = "red")
 lines(age_axis, delta(optimized_parameters_exposed_cubic, age_axis), col = "green")
 legend(0,0.30, legend = c("Control", 'Infected', "Exposed"), col = c("blue", "red", "green"), lty = 1)
 dev.off()
+
+pdf("Quartic_models.pdf")
+plot_deltas_quartic <- plot(age_axis, delta(optimized_parameters_control_quartic, age_axis), xlab = "Age [days]", ylab = "Delta under quartic approx.", col = "blue", type = "l")
+lines(age_axis, delta(optimized_parameters_infecteds_quartic, age_axis), col = "red")
+lines(age_axis, delta(optimized_parameters_exposed_quartic, age_axis), col = "green")
+legend(0,0.30, legend = c("Control", 'Infected', "Exposed"), col = c("blue", "red", "green"), lty = 1)
+dev.off()
+

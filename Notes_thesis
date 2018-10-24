@@ -4,5 +4,20 @@ Meeting with Roland Friday 19.10.:
 The likelihood was wrong, instead of delta term in the likelihood,
 there should be the survival up to that point exp[-sum(delta(a))].
 
+further improvent achieved by trying different initial parameters
+
 Then do the Pi Xi Square test (likelihood ratio), check the book
 "Biometry" for this.
+
+Meeting with Roland Monday 20.10:
+- match of our survival model to the data is pretty good now, but still pchisq() test can be performed in order to find out whether higher polynomial could do even better job
+-recommedation for further optimization packages: optimx, some more?
+-Example of the pchisq() sent to mail:
+	pchisq(2*exp(-52)/exp(-53),df=1,lower.tail=F)
+	-check the input is correct (2*likelihoodratio)
+
+Meeting with Roland Wednesday 24.10.:
+-death rates look moreorless good - only the quartic deltas have a peak around age = 50, check whether it is supported by the data, maybe try to fit it with exponential instead
+Now: -	look at the model provided by Roland, put in the delta for the uninfecteds, look what you 		get
+     -	Maybe try to play around with the transmission and virulence to get the delta for the 		infected population based only on rhe delta of the uninfecteds
+     -	Does the model reflect, that the pathogen only gets transmitted after death?
