@@ -192,6 +192,7 @@ for (i in const_initial) {
   }
 }
 
+
 delta_values_control_linear <- delta(optimized_parameters_control_linear, age_axis)
 delta_values_infecteds_linear <- delta(optimized_parameters_infecteds_linear, age_axis)
 delta_values_exposed_linear <- delta(optimized_parameters_exposed_linear, age_axis)

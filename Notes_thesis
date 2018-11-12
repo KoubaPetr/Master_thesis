@@ -18,8 +18,31 @@ Meeting with Roland Monday 20.10:
 
 Meeting with Roland Wednesday 24.10.:
 -death rates look moreorless good - only the quartic deltas have a peak around age = 50, check whether it is supported by the data, maybe try to fit it with exponential instead
-Now: -	look at the model provided by Roland, put in the delta for the uninfecteds, look what you 		get - for this get the animations fixed
-     -	Maybe try to play around with the transmission and virulence to get the delta for the 		infected population based only on rhe delta of the uninfecteds
+Now: -	look at the model provided by Roland, put in the delta for the uninfecteds, look what you 		get - for this get the animations fixed - done without animations
+     -	MAYBE TRY TO PLAY AROUND WITH THE TRANSMISSION AND VIRULENCE TO GET THE DELTA FOR THE 		INFECTED POPULATION BASED ONLY ON RHE DELTA OF THE UNINFECTEDS - Try this fix now
      -	Does the model reflect, that the pathogen only gets transmitted after death?
      -  Think about the problem theoretically : done on paper!
+
+Meeting Monday 5.11.:
+	- The suggestions to correct the model were right
+	- We can try to get the analytical solution of the PDE model. Its advantage is that it 		works even for unknown parameters. We can, however, learn the parameters from the data and 		in the simulation we should obtain similar results as in the analytical solution.
+	-Summarize questions for Frida, to clarify the data and summarize what we did to ask her 	for suggestions what we might do further.
+
+TODO:	-read the paper again, think of what we want to find out and pick the approach accordingly 		to our goals
+	-this has lower priority, but I could still play around with the possibility of analytical 		solution to our model, refer to the book
+		Mathematical Tools for Understanding Infectious Disease Dynamics 
+		Odo Diekmann, Hans Heesterbeek & Tom Britton
+Tuesday 6.11.
+- DONE:I have read the paper and the appendix again, summarized it in the latex file
+- The paper might have useful references, check them out if it would be useful
+- Napad na to podivat se na Poincarre recurrence theorem, checknout jakejch se tyka rovnic a jestli by to neslo pouzit na nejaky epidemiologicky modely
+- Zkusit vymyslet navrhy co by mohlo byt nasim cilem!
+- Kouknout na data a rozmyslet si otazky k nim
+- Rozmyslet si otazky na Fridu Ben-Ami co by ji mohlo zajimat abychom zkoukli
+
+Wednesday 7.11:
+-Wrote down suggestions, sent to Roland, wait for feedback
+Note to self:
+Example:
+Possible thing we could check: Paper \citep{Izhar_Ben_Ami_2} claims: "... The relationship between virulence and parasite transmission is believed to be a primary driver of the evolution of virulence, and it can be used to predict the optimal level of virulence [23]. Izhar and Ben-Ami [9] showed that this relationship is age-specific, because younger hosts produced more transmission stages than older ones even though parasite-induced \textbf{host mortality (virulence) did not vary with host age}..." We could try to check if we get a virulence which is constant with age.
 
