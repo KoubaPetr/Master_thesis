@@ -71,7 +71,7 @@ for (x in 0:lifetime_threshold) {
 for (x in 4:lifetime_threshold){
   survivals_aai_5_control[x+1] <- sum(host_longevity_control>x)/ sum(host_longevity_control>5)
 }
-
+#stepfun(survivals_aai_5_control)
 for (x in 14:lifetime_threshold){
   survivals_aai_15_control[x+1] <- sum(host_longevity_control>x)/ sum(host_longevity_control>15)
 }
@@ -491,16 +491,16 @@ pchisq(LRT_cub_quartic_control, df = 1, lower.tail = FALSE) # for age at infecti
 ##### Plotting ------------------------------------------------------------------------------------
 ### Comparing exposed and control populations------------------------------------------------------
 ## Age at infection = 5
-plot(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_exp[5:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=5", type = "l", lwd = 3)
-lines(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_control[5:lifetime_threshold], lwd = 3, col = "red")
+plot(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_exp[5:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=5", type = "s", lwd = 3)
+lines(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_control[5:lifetime_threshold], lwd = 3, type = "s", col = "red")
 # Quartic model Control
 lines(x = age_axis[5:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[5:lifetime_threshold], parameters = optimized_parameters_aai_5_control_quartic), x = age_of_inf_5_axis), col = "red")
 # Quartic model Exposed
 lines(x = age_axis[5:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[5:lifetime_threshold], parameters = optimized_parameters_aai_5_exp_quartic), x = age_of_inf_5_axis), col = "black")
 legend("bottomleft", legend = c("Data exposed", "Data control", "Quartic model control", "Quartic model exposed"), col = c("black", "red", "black", "red"), lwd = c(3,3,1,1), cex = 0.8)
 
-plot(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_exp[5:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=5", type = "l", lwd = 3)
-lines(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_control[5:lifetime_threshold], lwd = 3, col = "red")
+plot(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_exp[5:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=5", type = "s", lwd = 3)
+lines(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_control[5:lifetime_threshold], lwd = 3, col = "red", type = "s")
 legend("bottomleft", legend = c("Data exposed", "Data control"), col = c("black", "red"), lwd = c(3,3), cex = 0.8)
 
 plot(x = age_axis[5:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[5:lifetime_threshold], parameters = optimized_parameters_aai_5_control_quartic), x = age_of_inf_5_axis), col = "red", xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=5", type = "l", lwd = 3)
@@ -509,16 +509,16 @@ lines(x = age_axis[5:lifetime_threshold], y = survival_model(delta = delta(age =
 legend("bottomleft", legend = c("Quartic model exposed", "Quartic model control"), col = c("black", "red"), lwd = c(1,1), cex = 0.8)
 
 ## Age at infection = 15
-plot(x = age_axis[15:lifetime_threshold], y = stepfun(age_axis[15:lifetime_threshold],survivals_aai_15_exp[15:lifetime_threshold]), xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=15", type = "l", lwd = 3)
-lines(x = age_axis[15:lifetime_threshold], y = survivals_aai_15_control[15:lifetime_threshold], lwd = 3, col = "red")
+plot(x = age_axis[15:lifetime_threshold], y = stepfun(age_axis[15:lifetime_threshold],survivals_aai_15_exp[15:lifetime_threshold]), xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=15", type = "s", lwd = 3)
+lines(x = age_axis[15:lifetime_threshold], y = survivals_aai_15_control[15:lifetime_threshold], lwd = 3, type = "s", col = "red")
 # Quartic model Control
 lines(x = age_axis[15:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[15:lifetime_threshold], parameters = optimized_parameters_aai_15_control_quartic), x = age_of_inf_15_axis), col = "red")
 # Quartic model Exposed
 lines(x = age_axis[15:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[15:lifetime_threshold], parameters = optimized_parameters_aai_15_exp_quartic), x = age_of_inf_15_axis), col = "black")
 legend("bottomleft", legend = c("Data exposed", "Data control", "Quartic model control", "Quartic model exposed"), col = c("black", "red", "black", "red"), lwd = c(3,3,1,1), cex = 0.8)
 
-plot(x = age_axis[15:lifetime_threshold], y = survivals_aai_15_exp[15:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=15", type = "l", lwd = 3)
-lines(x = age_axis[15:lifetime_threshold], y = survivals_aai_15_control[15:lifetime_threshold], lwd = 3, col = "red")
+plot(x = age_axis[15:lifetime_threshold], y = survivals_aai_15_exp[15:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=15",type = "s", lwd = 3)
+lines(x = age_axis[15:lifetime_threshold], y = survivals_aai_15_control[15:lifetime_threshold], lwd = 3, type = "s", col = "red")
 legend("bottomleft", legend = c("Data exposed", "Data control"), col = c("black", "red"), lwd = c(3,3), cex = 0.8)
 
 plot(x = age_axis[15:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[15:lifetime_threshold], parameters = optimized_parameters_aai_15_control_quartic), x = age_of_inf_15_axis), col = "red", xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=15", type = "l", lwd = 3)
@@ -527,16 +527,16 @@ lines(x = age_axis[15:lifetime_threshold], y = survival_model(delta = delta(age 
 legend("bottomleft", legend = c("Quartic model exposed", "Quartic model control"), col = c("black", "red"), lwd = c(1,1), cex = 0.8)
 
 ## Age at infection = 30
-plot(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_exp[30:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=30", type = "l", lwd = 3)
-lines(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_control[30:lifetime_threshold], lwd = 3, col = "red")
+plot(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_exp[30:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=30", type = "s", lwd = 3)
+lines(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_control[30:lifetime_threshold], lwd = 3, type = "s", col = "red")
 # Quartic model Control
 lines(x = age_axis[30:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[30:lifetime_threshold], parameters = optimized_parameters_aai_30_control_quartic), x = age_of_inf_30_axis), col = "red")
 # Quartic model Exposed
 lines(x = age_axis[30:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[30:lifetime_threshold], parameters = optimized_parameters_aai_30_exp_quartic), x = age_of_inf_30_axis), col = "black")
 legend("bottomleft", legend = c("Data exposed", "Data control", "Quartic model control", "Quartic model exposed"), col = c("black", "red", "black", "red"), lwd = c(3,3,1,1), cex = 0.8)
 
-plot(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_exp[30:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=30", type = "l", lwd = 3)
-lines(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_control[30:lifetime_threshold], lwd = 3, col = "red")
+plot(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_exp[30:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=30", type = "s", lwd = 3)
+lines(x = age_axis[30:lifetime_threshold], y = survivals_aai_30_control[30:lifetime_threshold], lwd = 3, type = "s", col = "red")
 legend("bottomleft", legend = c("Data exposed", "Data control"), col = c("black", "red"), lwd = c(3,3), cex = 0.8)
 
 plot(x = age_axis[30:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[30:lifetime_threshold], parameters = optimized_parameters_aai_30_control_quartic), x = age_of_inf_30_axis), col = "red", xlab = "Age [Days]", ylab = "Survival_Exposed_At_Age=30", type = "l", lwd = 3)
