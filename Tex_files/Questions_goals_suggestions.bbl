@@ -1,0 +1,48 @@
+\begin{thebibliography}{4}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Izhar and Ben-Ami()]{Izhar_Ben_Ami}
+Rony Izhar and Frida Ben-Ami.
+\newblock Host age modulates parasite infectivity, virulence and reproduction.
+\newblock \emph{Journal of Animal Ecology}, 84\penalty0 (4):\penalty0
+  1018--1028.
+\newblock \doi{10.1111/1365-2656.12352}.
+\newblock URL
+  \url{https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/1365-2656.12352}.
+
+\bibitem[Garbutt et~al.(2014)Garbutt, O{\textquoteright}Donoghue, McTaggart,
+  Wilson, and Little]{Garbutt}
+Jennie~S. Garbutt, Anna J.~P. O{\textquoteright}Donoghue, Seanna~J. McTaggart,
+  Philip~J. Wilson, and Tom~J. Little.
+\newblock The development of pathogen resistance in daphnia magna: implications
+  for disease spread in age-structured populations.
+\newblock \emph{Journal of Experimental Biology}, 217\penalty0 (21):\penalty0
+  3929--3934, 2014.
+\newblock ISSN 0022-0949.
+\newblock \doi{10.1242/jeb.111260}.
+\newblock URL \url{http://jeb.biologists.org/content/217/21/3929}.
+
+\bibitem[ALIZON et~al.()ALIZON, HURFORD, MIDEO, and VAN~BAALEN]{Alizon}
+S.~ALIZON, A.~HURFORD, N.~MIDEO, and M.~VAN~BAALEN.
+\newblock Virulence evolution and the trade-off hypothesis: history, current
+  state of affairs and the future.
+\newblock \emph{Journal of Evolutionary Biology}, 22\penalty0 (2):\penalty0
+  245--259.
+\newblock \doi{10.1111/j.1420-9101.2008.01658.x}.
+\newblock URL
+  \url{https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1420-9101.2008.01658.x}.
+
+\bibitem[Izhar et~al.(2015)Izhar, Routtu, and Ben-Ami]{Izhar_Ben_Ami_2}
+Rony Izhar, Jarkko Routtu, and Frida Ben-Ami.
+\newblock Host age modulates within-host parasite competition.
+\newblock \emph{Biology Letters}, 11\penalty0 (5), 2015.
+\newblock ISSN 1744-9561.
+\newblock \doi{10.1098/rsbl.2015.0131}.
+\newblock URL
+  \url{http://rsbl.royalsocietypublishing.org/content/11/5/20150131}.
+
+\end{thebibliography}

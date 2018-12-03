@@ -1,0 +1,70 @@
+\begin{thebibliography}{6}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Antia et~al.(1994)Antia, Levin, and May]{antia}
+Rustom Antia, Bruce~R. Levin, and Robert~M. May.
+\newblock Within-host population dynamics and the evolution and maintenance of
+  microparasite virulence.
+\newblock \emph{The American Naturalist}, 144\penalty0 (3):\penalty0 457--472,
+  1994.
+\newblock ISSN 00030147, 15375323.
+\newblock URL \url{http://www.jstor.org/stable/2462955}.
+
+\bibitem[Rutter et~al.(2017)Rutter, Banks, LeBlanc, and
+  Flores]{continuous_structured_pop}
+Erica~M. Rutter, H.~T. Banks, Gerald~A. LeBlanc, and Kevin~B. Flores.
+\newblock Continuous structured population models for daphnia magna.
+\newblock \emph{Bulletin of Mathematical Biology}, 79\penalty0 (11):\penalty0
+  2627--2648, Nov 2017.
+\newblock ISSN 1522-9602.
+\newblock \doi{10.1007/s11538-017-0344-8}.
+\newblock URL \url{https://doi.org/10.1007/s11538-017-0344-8}.
+
+\bibitem[Izhar and Ben-Ami()]{Izhar_Ben_Ami}
+Rony Izhar and Frida Ben-Ami.
+\newblock Host age modulates parasite infectivity, virulence and reproduction.
+\newblock \emph{Journal of Animal Ecology}, 84\penalty0 (4):\penalty0
+  1018--1028.
+\newblock \doi{10.1111/1365-2656.12352}.
+\newblock URL
+  \url{https://besjournals.onlinelibrary.wiley.com/doi/abs/10.1111/1365-2656.12352}.
+
+\bibitem[Adoteye et~al.(2015)Adoteye, Banks, Cross, Eytcheson, Flores, LeBlanc,
+  Nguyen, Ross, Smith, Stemkovski, and Stokely]{SPM}
+Kaska Adoteye, H.T. Banks, Karissa Cross, Stephanie Eytcheson, Kevin~B. Flores,
+  Gerald~A. LeBlanc, Timothy Nguyen, Chelsea Ross, Emmaline Smith, Michael
+  Stemkovski, and Sarah Stokely.
+\newblock Statistical validation of structured population models for daphnia
+  magna.
+\newblock \emph{Mathematical Biosciences}, 266:\penalty0 73 -- 84, 2015.
+\newblock ISSN 0025-5564.
+\newblock \doi{https://doi.org/10.1016/j.mbs.2015.06.003}.
+\newblock URL
+  \url{http://www.sciencedirect.com/science/article/pii/S0025556415001212}.
+
+\bibitem[ALIZON et~al.()ALIZON, HURFORD, MIDEO, and VAN~BAALEN]{Alizon}
+S.~ALIZON, A.~HURFORD, N.~MIDEO, and M.~VAN~BAALEN.
+\newblock Virulence evolution and the trade-off hypothesis: history, current
+  state of affairs and the future.
+\newblock \emph{Journal of Evolutionary Biology}, 22\penalty0 (2):\penalty0
+  245--259.
+\newblock \doi{10.1111/j.1420-9101.2008.01658.x}.
+\newblock URL
+  \url{https://onlinelibrary.wiley.com/doi/abs/10.1111/j.1420-9101.2008.01658.x}.
+
+\bibitem[Ebert and Bull(2003)]{trade-off_sceptic}
+Dieter Ebert and James~J. Bull.
+\newblock Challenging the trade-off model for the evolution of virulence: is
+  virulence management feasible?
+\newblock \emph{Trends in Microbiology}, 11\penalty0 (1):\penalty0 15 -- 20,
+  2003.
+\newblock ISSN 0966-842X.
+\newblock \doi{https://doi.org/10.1016/S0966-842X(02)00003-3}.
+\newblock URL
+  \url{http://www.sciencedirect.com/science/article/pii/S0966842X02000033}.
+
+\end{thebibliography}

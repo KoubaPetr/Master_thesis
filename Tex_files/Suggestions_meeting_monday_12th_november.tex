@@ -1,0 +1,66 @@
+\documentclass[10pt]{article}         %% What type of document you're writing.
+
+%%%%% Preamble
+
+%% Packages to use
+
+\usepackage{amsmath,amsfonts,amssymb,url}   %% AMS mathematics macros
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage[svgnames]{xcolor}
+\usepackage{listings}
+
+
+\graphicspath{ {./images/} }
+%% Title Information.
+
+\lstset{language=R,
+    basicstyle=\small\ttfamily,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character},
+    keywordstyle=\color{blue},
+    commentstyle=\color{DarkGreen},
+}
+
+\title{Questions, goals, suggestions}
+\author{Petr Kouba}
+%% \date{1 July 2004}           %% By default, LaTeX uses the current date
+
+%%%%% The Document
+
+\begin{document}
+\maketitle
+
+
+\section{Suggestions based on the discussion on Monday 12th of November}
+\begin{enumerate}\bfseries
+\item We could have a look at the mechanism, by which the pathogen kills the host (pathogen population threshold?, the threshold could be a function of food abundance or of the size of the host...). To this end, have a look at the paper \cite{antia}.\newline
+{\normalfont I have one question about the paper, on the page 463 there is the relationship between virulence and the critical dose discussed, where does this relationship come from, is there a clear reasoning for it?
+ As for the inspiration from this paper, we could have a look at the within host dynamics of the pathogen, if we could see something interesting in the data. See suggestion 2 in section~\ref{sec_2}. We could also try to infere on the dependency of the pathogen within-host population treshold, as a function of age (for example if we assume some relation for the body size of the daphnia as a function of age (we could use the logistic curve as in \cite{continuous_structured_pop}.}
+\item Read the paper on the effect of age of infection on virulence and the pathogen load the host can maintain. Check what techniques they used to get these conclusion (did they use survival analysis?). For this read \cite{Izhar_Ben_Ami}.\newline
+{\normalfont They estimated the density dependent transmission rate $\beta$ in a simple SI model neglecting deaths and births (sign error in appendix A1), by MLE using survival analysis. When estimating the deathrates they used MLE again, but they fitted the death rates with a constant (for each group, grouped by the age of exposure), like this they claimed they did not observe significant effect of age of infection on virulence, \textbf{maybe with our fit, we could find a significant pattern.}, check Appendix A2. The observation that more spores were produced in host that were younger when infected, would need to be checked, if virulence which is not constant was to be discovered.}
+\item Think of what kind of data we would need to do the same things they did in the Little paper, just with more detailed model. For this, check how they assigned the individuals to the age classes - did they follow their exact age and than just separated them into two groups? Or did they use the coarse-grinding (Young/Old groups) already since the beginning of the experiment? Maybe we could think about the mechanisms that would cause the suggested behaviour of $R_0$. (Host or pathogen trick?)\newline
+{\normalfont If we keep our enviromental transmission model, we would instead of beta deal directly with the susceptibility. To model that, we would express the ratio of infecteds in the (infecteds + exposed) population as a function of age of infection, assuming the pathogen dose was constant. We would also need the data on the age of the mother, but this could be probably quite reliably expressed as the number of the clutch from which the offspring came. And these data are available for the Little paper (they observed 4 different clutches). Otherwise, we could just repeat their simulation, with more detailed age structure. How to treat $R_0$ with age dependent parameters, is the integration over age sufficient?}
+\item For the carrying capacity, we could implement a switch for the effect being included in fertility/mortality. Check the paper \cite{SPM}, and look whether they investigated the effect on mortality. We could use their results to support our implementation of the carrying capacity.\newline
+{\normalfont Yes, they investigated the effect on the probability of survival as well.}
+\item Where is the step in the Hazard function in our data? Control or infected population? If infected it would give us bigger reason to study the structure with respect to the age of infection.\newline
+{\normalfont The step is best to be seen in the control population, but it is slightly visible even among infecteds}
+\item Prepare the presentation for the videoconference
+\end{enumerate}
+
+\section{Post meeting suggestions}
+\label{sec_2}
+\begin{enumerate}
+\item Should we try to have a look at whether we could make a statement about the trade-off hypothesis? Potentially good summary can be found in \citep{Alizon}
+\item Should we look at the relation between pathogen load and virulence? Pathogen load/fecundity could could represent the pathogen fitness, and we could try to find the optimal virulence and compare the curve with Figure 1 in \citep{trade-off_sceptic}. At the same time, since the pathogen load plays the role of infectivity in our case, we could also look at it as the infectivity-virulence relation and conclude on the validity of the trade-off hypothesis in this case.
+\item Think about the age structurued $R_0$. Should we explicitely study the stability of the equations or is it sufficient to take the standart expresion of $R_0$ for each age and just average over age? This can be found in the textbook by Anderson, May, page 179, equation (9.10).
+\end{enumerate}
+
+\bibliographystyle{unsrtnat}
+\bibliography{bibliography_SIE_model}
+
+\end{document}
+

@@ -386,3 +386,10 @@ lines(age_axis, delta(optimized_parameters_exposed_quartic, age_axis), col = "gr
 lines(age_axis, delta(optimized_parameters_infecteds_quartic, age_axis), col = "purple")
 legend(0,0.40, legend = c("Control (quartic)", 'Infected(quadratic)', "Exposed(quartic)", "Infected(quartic)"), col = c("blue", "red", "green", "purple"), lty = 1, cex = 0.8)
 dev.off()
+
+pdf("Virulence_97days.pdf")
+plot_virulence <- plot(age_axis[1:97], delta(optimized_parameters_infecteds_quartic,age_axis[1:97])-delta(optimized_parameters_control_quartic, age_axis[1:97]), xlab = "Age [days]", ylab = "Virulence for 4th order fit of deathrate of infecteds", col = "blue", type = "l")
+lines(age_axis[1:97], delta(optimized_parameters_infecteds_quadratic, age_axis[1:97])-delta(optimized_parameters_control_quartic, age_axis[1:97]), col = "red")
+legend(5,0.13, legend = c("Virulence (quartic/quartic)", 'Virulence(quartic/quadratic)'), col = c("blue", "red"), lty = 1, cex = 0.8)
+dev.off()
+View(dataset)

@@ -46,3 +46,31 @@ Note to self:
 Example:
 Possible thing we could check: Paper \citep{Izhar_Ben_Ami_2} claims: "... The relationship between virulence and parasite transmission is believed to be a primary driver of the evolution of virulence, and it can be used to predict the optimal level of virulence [23]. Izhar and Ben-Ami [9] showed that this relationship is age-specific, because younger hosts produced more transmission stages than older ones even though parasite-induced \textbf{host mortality (virulence) did not vary with host age}..." We could try to check if we get a virulence which is constant with age.
 
+Presentation to Frida 20th November:
+
+- They have a paper (they will send it to us hopefully?), where they showed that the age moderates the pathogen strains competition, younger hosts enable coevolution of different strains whereas older host favor superinfection (?), this could potentially explain the positive corellation of R0 and delta - we could think about this
+
+- For the maternal data we could use Little data (but they only meassured in young mothers... our mothers are older)
+
+- we should keep in mind the different stages of the infection, if the infected dies shortly after infection it does not infect (we should keep in mind that only some proportion of the infecteds transmitt after natural death - how to estimate this proportion?)
+
+-we should consider the age (or age at infection) dependence of burst b
+
+-we have data on the population growth of pathogen within host, but the data dont have the age of death due to infection (because the Daphnia needs to be killed in order to count the spores), we could use it to estimate the population dynamics withni host and combine those withs with our data with ages of death due to infection and the sporecount at death to insvestigate the hypothesis with the deaths due to the pathogen threshold
+
+-The pathogen Pateuria ramosa causes gigantism of the Daphnia (it also sterilizes it, so probably it forses it to use the spare resources for growth instead of for offspring) - logical since we dont have any vertical transmission
+
+-They also have data for different pathogens, we could choose horizontal/vertical transmission (the vertical transmitted one probably doesnt cause gigantism and doesnt sterilize, right? That would nicely support the evolutionary arguments), they also have some pathogens which infect gradually (not only after host death)
+
+-They would like to have our input for the design of the upcoming experiment, what would we like them to have meassured? (for example the size of the Daphnia w.r.t. the pathogen load that evolved within it)
+
+Succesive discussion with Roland: Think of how to express the deathrate of infecteds, which might depend on both age and age at infection (but seems like it is only age dependent). Examine the dependency of virulance, and how to combine the virulence and the natural deathrate into the overall deathrate of infecteds (it might be just a sum, but it might be coupled... if v(AaI) and delta_natural(age), is it really the case that we dont have coupled terms age*AaI in the expresion of delta_overall(age,AaI)?
+
+- Virulence seems to depend on the age at infection, could it be that because younger susceptibles are more susceptible, there is bigger competition between pathogens and they tend to be more lethal?
+
+
+
+
+
+
+

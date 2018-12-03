@@ -1,0 +1,182 @@
+\documentclass[10pt]{article}         %% What type of document you're writing.
+
+%%%%% Preamble
+
+%% Packages to use
+
+\usepackage{amsmath,amsfonts,amssymb,url}   %% AMS mathematics macros
+\usepackage[numbers,sort&compress]{natbib}
+\usepackage{graphicx}
+\usepackage{subcaption}
+\usepackage[svgnames]{xcolor}
+\usepackage{listings}
+
+
+\graphicspath{ {./images/} }
+%% Title Information.
+
+\lstset{language=R,
+    basicstyle=\small\ttfamily,
+    stringstyle=\color{DarkGreen},
+    otherkeywords={0,1,2,3,4,5,6,7,8,9},
+    morekeywords={TRUE,FALSE},
+    deletekeywords={data,frame,length,as,character},
+    keywordstyle=\color{blue},
+    commentstyle=\color{DarkGreen},
+}
+
+\title{Discussion on solution of the PDE model and comparison with other approaches}
+\author{Petr Kouba}
+%% \date{1 July 2004}           %% By default, LaTeX uses the current date
+
+%%%%% The Document
+
+\begin{document}
+\maketitle
+
+\section{Continuous model - PDEs}
+\label{continuous}
+
+I changed the model slightly from the version before, now I use the birth of new susceptibles as a boundary condition along the line $[a=0, t \geq 0]$. This assumes we can still have an arbitrary initial distribution of susceptibles and we can start with arbitrary number of free pathogens in the environment, but we will have 0 infected of age a=0 at any time (this matches our assumption that individuals cannot be born infected).
+
+\begin{equation}
+\label{D_eq}
+	\frac{\partial D(a,t)}{\partial t} + \frac{\partial D(a,t)}{\partial a}= - f(a)D(a,t)P(t) - \delta^{sus}(a)D(a,t)
+\end{equation}
+
+\begin{equation}
+\label{I_eq}
+	\frac{\partial I(a,t)}{\partial t} + \frac{\partial I(a,t)}{\partial a}= f(a)D(a,t)P(t) - \delta^{inf}(a)I(a,t)
+\end{equation}
+
+\begin{equation}
+\label{P_eq}
+	\frac{dP(t)}{dt}= \int_{0}^{\inf} \delta(a)^{inf} I(a,t)b \, da - \delta^{pat}P(t)
+\end{equation} \newline
+\newline
+\textbf{Initial conditions:}  \newline
+$D(a,0)=\Psi(a)$ ... initial age distribution of susceptibles \newline
+$I(a,0)=\Phi(a)$ ... initial age distribution of infecteds \newline
+$D(0,t)= \int_0^{\inf}r(a)D(a,t)\, da$... number of newborn susceptibles at time t\newline
+$I(0,t)=0$\newline
+$P(t_0)$ ... initial number of parasites in the environment \newline\newline
+\textbf{Definition of variables:}  \newline
+$D(a,t)$ 	...		number of susceptible Daphnias of age a, in time t	\newline
+$I(a,t)$ 	...		number of infected Daphnias of age a, in time t \newline
+$P(t)$	...		number of pathogens in the environment, which can infect \newline
+$r(a)$ ... is an age dependant reproductive rate)\newline
+$f(a)$ ... age dependent susceptibility \newline
+$\delta(a)^{sus}$ ... age dependent death rate of susceptible individuals \newline\newline
+$\delta(a)^{inf} = \delta(a)^{sus} + v(a)$ ... age dependent death rate of infected individuals, obtained by summing the death rate of susceptibles and age dependent virulence \newline
+$\delta^{pat}$ ... constant death rate of pathogens in the environment \newline
+$b$ ... number of new pathogens released to the environment after death of an infected infividual\newline
+\newline
+\textbf{Assumptions:}
+
+\begin{enumerate}
+\item The above model does not reflect the carrying capacity of the environment, it could be reflected by considering death and birth rates depending on the total population size (population density), through which the death and reproductive rates could implicitely also obtain time dependence. (?) But in our discrete model this will be taken care of by the normalization to carrying capacity
+\item We neglect the age structure of the pathogens in the environment and therefore (together with the above assumption) consider their death rate to be constant
+\item Infected individuals are sterilized immediately and therefore are not giveng birth to new offsprings and new offsrings cannot be born with inhereted pathogen (therefore births are only in favor of the compartment of suceptibles)
+\item The infectiousness of a burst $b$ is constant (But actually it might be correlated with the duration of infection, so that would be possible improvement in the model)
+\end{enumerate}
+
+\section{Solving the model by the method of characteristics}
+
+Because we have the boundary conditions along lines $[a=0, t \geq 0]$ and $[a \geq 0, t=0]$, we can reduce our set of PDEs to a set of ODEs along the lines with slope 1 in the quadrant defined by the points $[a \geq 0, t \geq 0]$.
+
+Along such lines, we can rewrite the term $\frac{\partial D(a,t)}{\partial t} + \frac{\partial D(a,t)}{\partial a}$ as $\frac{dD(a_0 + h,t_0 +h)}{dt}$ and therefore we can reduce our problem to one variable. We obtain the following set of ODEs
+
+\begin{equation}
+\frac{dD(h)}{dh} = (-f(h)P(h) + \delta^{sus}(h))D(h)
+\end{equation}
+
+\begin{equation}
+\frac{dI(h)}{dh} = f(h)P(h)D(h) - \delta^{inf}(h)I(h)
+\end{equation}
+
+And the equation for the pathogens in the environment can be used the same as before, we just have to keep in mind the 
+
+\begin{equation}
+\frac{dP(t)}{dh}= \int_{0}^{\inf} \delta(a)^{inf} I(a,t)b \, da - \delta^{pat}P(t)
+\end{equation}
+
+We adapt the same boundary conditions as before, which were already functions of one variable. We only reflect the necessary substitutions ($a,t \rightarrow h$).\newline
+We can obtain the following (implicit solutions):
+
+\begin{equation}
+\label{D}
+D(h) = D_0e^{-\int_0^{h}[-f(h')P(h') - \delta^{sus}(h')]dh'}
+\end{equation}
+
+\begin{equation}
+\label{I}
+I(h) = -\int_0^{h}[f(h')P(h')D(h')]dh' - I_0 e^{\int_0^{h}[\delta^{sus}(h')]dh'}
+\end{equation}
+
+\begin{equation}
+\label{P}
+P(t) = -\int_0^{t}\int_0^{\inf}[b\delta^{inf}(a')I(a',t')]da' dt' + P_0 e^{-\delta^{pat}t }
+\end{equation}
+
+\subsection{Getting explicit solutions}
+\begin{enumerate}
+\item The above implicit expressions do not seem to be possible to decouple from each other. But if we gave up on the complete description of the dynamics, we could assume the function $P(t)$ to be known, which would allow explicit expressions for D and I. To this end we could fit P(t) to the data we have and use this fit for solving the equations ~\ref{D} and ~\ref{I} explicitely.
+\item We could solve the set of equations ~\ref{D_eq},~\ref{I_eq} and~\ref{P_eq} nummerically, this is equivalent to our model we have already implemented. If we instead solve numerically the integral form ~\ref{D},~\ref{I} and ~\ref{P}, would this give us any advantage? We could use more precise techniques for numerical integration, right?
+\item Other approach would be to neglect the environmental transport and model it as a direct transmission with transmission rate depending on both the age of the infector and the age of the individual getting infected in that interaction. Similar approach was used in the Little paper. 
+\item Could it help to consider some special cases (such as steady state...)
+\end{enumerate}
+
+\section{Suggestions}
+\begin{enumerate}
+\item What about the carrying capacity, is the normalization - done the way as it is in our model - legit? It probably should not affect both D and I compartments equally. In the Little paper they put its effect in the decline of reproduction. Maybe it could also be projected into the deathrate.
+\item Should we stick with the environmental transmission or try the direct transmission model as well?
+\item Should we study the effect of the age structure on the "infectivity" (or size of the burst)? It might be more depending on the age of the infection, should we structure our model with respect to the age of infection as well?
+\item Paper by Frida Ben-Ami [http://rsbl.royalsocietypublishing.org/content/11/5/20150131] claims: "... The relationship between virulence and parasite transmission is believed to be a primary driver of the evolution of virulence, and it can be used to predict the optimal level of virulence [23]. Izhar and Ben-Ami [9] showed that this relationship is age-specific, because younger hosts produced more transmission stages than older ones even though parasite-induced host mortality (virulence) did not vary with host age..." So is there supposed to be no effect of the heterogeneity on virulence?
+\end{enumerate}
+
+\section{Questions about the data}
+Is there some description of the experiment? I would be particulary interested in the following questions:
+
+\begin{enumerate}
+\item What is the chronology of the experiment? Was it one generation of peers observed over time? Or was there some non-trivial initial age distribution?
+\item Was it all one population? Or were the populations somehow separated?
+\item What was the process of the exposure to the pathogen? Were the death individuals removed from the population to avoid pathogen exposure outside of designeted time windows?
+\item Is there some hypothesis concerning these data, which would be interesting to look at?
+\end{enumerate}
+
+\section{Review of the Little paper}
+Most of the useful information are mentioned in the appendix of the paper.\newline
+
+They observed in their experiment that older mothers give birth to less susceptible offsprings. Then they cited some papers \cite{Izhar_Ben_Ami},\cite{Garbutt}, \cite{Alizon}  which showed that older individuals are less susceptible themself.\newline
+
+Then they build an epidemiological model, where they wanted to simulate the above mentioned age effects on the spread of epidemia (through $R_0$).\newline
+
+They used an age-structured SI model, but they also had a look at the environmental transmission for confirmation.\newline
+
+Their SI model has 4 age groups (Young individuals from young mothers, young individuals from old mothers, old individuals from young mothers and  old individuals from old mothers). They include the effect of the finite carrying capacity into lowering of the reproduction rate.\newline
+
+Then they consider baseline susceptibility for the age group of young individuals from young mothers $\beta_{YY}$ and then introduce the factors $M,V >0$ which correspond to the lowering of the susceptibiblity due the age or due to the age of the mother, respectively. For the group of old individuals of old mothers they combine both effects first multiplicatively $\beta_{OO}=(1-M)(1-V)\beta_{YY}$ and then they confirm their claim even for additive combination of the effects with $\beta_{OO}=(1-M-V)\beta_{YY}$.\newline
+
+The above concerned the susceptibility, for the "infectivity" of the infector they did not explicitely consider the age effect. They only distinguised the cases when the infector died due to the infection and then it was transmiting and when it died due to natural causes and then it was transmitting only with some probability $p<1$).\newline
+
+They assume constant virulence and death and reproduction rates accross all the age groups.\newline
+
+With the above model, they compute $R_0$ and find out that for some values of $M$ and $V$ (the proportional factors lowering the susceptibility due to the age effects) they can achieve $R_0$ to be decreasing with increasing death rate $\delta$. Which opposes usual assumptions (and experience) and therefore claim to have found a new ecological context in which $R_0$ has a different behaviour.\newline
+
+They confirmed this for both multiplicative and additive model of the susceptibility $\beta_{OO}=(1-M)(1-V)\beta_{YY}$ and $\beta_{OO}=(1-M-V)\beta_{YY}$.\newline\newline
+
+Then they also took a look at the model with environmental transmission (basically the same as what we have now, they only added the consideration of pathogen being removed from the environment after infecting a new individual). This model also provided them with $R_0$ which had qualitatively the same behaviour as in the SI model without the environmental transmission.
+
+\section{Goals}
+
+What exactly should be our goal? 
+
+In the Little paper, they made their novel observation of the maternal age effect on the susceptibility, which they used to introduce a new parameter into the SI model, which produced unusual behaviour of $R_0$. Could we do something like this? Is there some potentially new information in the data we have?
+
+Or should we try to confirm/disprove something which has been already demonstrated on a simpler model, using our more finely age structured model (with allowing age dependence of the parameters as well)?
+
+\bibliographystyle{unsrtnat}
+\bibliography{bibliography_SIE_model}
+
+\end{document}
+
