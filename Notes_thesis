@@ -68,6 +68,10 @@ Succesive discussion with Roland: Think of how to express the deathrate of infec
 
 - Virulence seems to depend on the age at infection, could it be that because younger susceptibles are more susceptible, there is bigger competition between pathogens and they tend to be more lethal?
 
+- Read survival analysis book, to figure out the hypothesis testing of the distributions (lifespans, survival...), using gamma distribution? Kolmogorov-Smirnov test?
+-Show it is sufficient to use control instead of exposed (plots ready, show to Roland, discrepancy for aai=5 might be due to not enough data for exposed (16)), then use control instead of all the exposed in our virulence
+-Try hypothesis testing to show virulence significantly depends on age at infection
+-Read the papers from Frida and respond her
 
 
 

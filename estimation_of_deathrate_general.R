@@ -348,6 +348,18 @@ dev.off()
 
 optimized_parameters_control_quadratic
 delta(optimized_parameters_control_quadratic, age_axis)
+length(exposed_population$HostLongevity)
+length(longevity_aai_5_exp)
+length(longevity_aai_15_exp)
+length(longevity_aai_30_exp)
+length(control_population$HostLongevity)
+sum(control_population$HostLongevity>15)
+
+pdf("Survival_exposed_versus_control.pdf")
+plot(x = age_axis, y = survivals_exposed, xlab = "Age [Days]", ylab = "Survival [fraction]", type = "s", lwd = 3)
+lines(x = age_axis, y = survivals_control, lwd = 3, col = "red", type = "s")
+legend("bottomleft", legend = c("Data exposed", "Data control"), col = c("black", "red"), lwd = c(3,3), cex = 0.8)
+dev.off()
 
 #plotting delta, for different populations
 
