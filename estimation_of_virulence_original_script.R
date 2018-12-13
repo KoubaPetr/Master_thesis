@@ -97,9 +97,9 @@ likelihood_general <- function(parameters, longevity, age_at_infection){
   if(min(delta(parameters, age_axis))>=0){
       #does the binomial factor play any role in the likelihood? It does not, right? Since under the logarithm it only plays role of additive constant (independent of delta)
       for (i in 1:length(longevity)) {
-        likelihood_local <- likelihood_local -2*sum(delta(parameters, age_axis[age_at_infection:(longevity[i]-1)])) + log(1-exp(delta(parameters,longevity[i]))) #instead of delta put in the right probability of dying at age longevity[i]
+        likelihood_local <- likelihood_local -2*sum(delta(parameters, age_axis[age_at_infection:(longevity[i]-1)])) + log(1-exp(-delta(parameters,longevity[i]))) #instead of delta put in the right probability of dying at age longevity[i]
       }
-  
+    
     }else{
       likelihood_local <- -Inf
     }
@@ -185,59 +185,59 @@ for (i in const_initial) {
     counter <- counter + 1
     message("-------------------------------------------------------------",counter, "/9","-------------------------------------------------------------")
     
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_linear){
-    #   optimized_likelihood_aai_5_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
-    #   optimized_parameters_aai_5_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
-    #   message("correction achieved for aai_5_inf population and i=",i," and j=", j)
-    # }
-    # 
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_linear){
-    #   optimized_likelihood_aai_15_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
-    #   optimized_parameters_aai_15_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
-    #   message("correction achieved for aai_15_inf population and i=",i," and j=", j)
-    # }
-    # 
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_linear){
-    #   optimized_likelihood_aai_30_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
-    #   optimized_parameters_aai_30_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
-    #   message("correction achieved for aai_30_inf population and i=",i," and j=", j)
-    # }
-    # 
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_linear){
-    #   optimized_likelihood_aai_5_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
-    #   optimized_parameters_aai_5_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
-    #   message("correction achieved for aai_5_exp population and i=",i," and j=", j)
-    # }
-    # 
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_linear){
-    #   optimized_likelihood_aai_15_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
-    #   optimized_parameters_aai_15_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
-    #   message("correction achieved for aai_15_exp population and i=",i," and j=", j)
-    # }
-    # 
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_linear){
-    #   optimized_likelihood_aai_30_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
-    #   optimized_parameters_aai_30_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
-    #   message("correction achieved for aai_30_exp population and i=",i," and j=", j)
-    # }
-    # ###control
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_linear){
-    #   optimized_likelihood_aai_5_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
-    #   optimized_parameters_aai_5_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
-    #   message("correction achieved for aai_5_control population and i=",i," and j=", j)
-    # }
-    # 
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_linear){
-    #   optimized_likelihood_aai_15_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
-    #   optimized_parameters_aai_15_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
-    #   message("correction achieved for aai_15_control population and i=",i," and j=", j)
-    # }
-    # 
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_linear){
-    #   optimized_likelihood_aai_30_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
-    #   optimized_parameters_aai_30_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
-    #   message("correction achieved for aai_30_control population and i=",i," and j=", j)
-    # }
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_linear){
+      optimized_likelihood_aai_5_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
+      optimized_parameters_aai_5_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
+      message("correction achieved for aai_5_inf population and i=",i," and j=", j)
+    }
+
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_linear){
+      optimized_likelihood_aai_15_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
+      optimized_parameters_aai_15_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
+      message("correction achieved for aai_15_inf population and i=",i," and j=", j)
+    }
+
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_linear){
+      optimized_likelihood_aai_30_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
+      optimized_parameters_aai_30_inf_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
+      message("correction achieved for aai_30_inf population and i=",i," and j=", j)
+    }
+
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_linear){
+      optimized_likelihood_aai_5_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
+      optimized_parameters_aai_5_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
+      message("correction achieved for aai_5_exp population and i=",i," and j=", j)
+    }
+
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_linear){
+      optimized_likelihood_aai_15_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
+      optimized_parameters_aai_15_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
+      message("correction achieved for aai_15_exp population and i=",i," and j=", j)
+    }
+
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_linear){
+      optimized_likelihood_aai_30_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
+      optimized_parameters_aai_30_exp_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
+      message("correction achieved for aai_30_exp population and i=",i," and j=", j)
+    }
+    ###control
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_linear){
+      optimized_likelihood_aai_5_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
+      optimized_parameters_aai_5_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
+      message("correction achieved for aai_5_control population and i=",i," and j=", j)
+    }
+
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_linear){
+      optimized_likelihood_aai_15_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
+      optimized_parameters_aai_15_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
+      message("correction achieved for aai_15_control population and i=",i," and j=", j)
+    }
+
+    if(optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_linear){
+      optimized_likelihood_aai_30_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
+      optimized_parameters_aai_30_control_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
+      message("correction achieved for aai_30_control population and i=",i," and j=", j)
+    }
     
     if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value < optimized_likelihood_uninfected_linear){
       optimized_likelihood_uninfected_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value
@@ -253,59 +253,59 @@ for (i in const_initial) {
     
     for (k in quadrat_initial) {
       
-      # if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_quadratic){
-      #   optimized_likelihood_aai_5_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
-      #   optimized_parameters_aai_5_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
-      #   message("correction achieved for aai_5_inf population and i=",i," and j=", j, " and k=", k)
-      # }
-      # 
-      # if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_quadratic){
-      #   optimized_likelihood_aai_15_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
-      #   optimized_parameters_aai_15_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
-      #   message("correction achieved for aai_15_inf population and i=",i," and j=", j, " and k=", k)
-      # }
-      # 
-      # if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_quadratic){
-      #   optimized_likelihood_aai_30_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
-      #   optimized_parameters_aai_30_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
-      #   message("correction achieved for aai_30_inf population and i=",i," and j=", j, " and k=", k)
-      # }
-      # 
-      # if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_quadratic){
-      #   optimized_likelihood_aai_5_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
-      #   optimized_parameters_aai_5_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
-      #   message("correction achieved for aai_5_exp population and i=",i," and j=", j, " and k=", k)
-      # }
-      # 
-      # if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_quadratic){
-      #   optimized_likelihood_aai_15_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
-      #   optimized_parameters_aai_15_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
-      #   message("correction achieved for aai_15_exp population and i=",i," and j=", j, " and k=", k)
-      # }
-      # 
-      # if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_quadratic){
-      #   optimized_likelihood_aai_30_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
-      #   optimized_parameters_aai_30_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
-      #   message("correction achieved for aai_30_exp population and i=",i," and j=", j, " and k=", k)
-      # }
-      # ###control
-      # if(optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_quadratic){
-      #   optimized_likelihood_aai_5_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
-      #   optimized_parameters_aai_5_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
-      #   message("correction achieved for aai_5_control population and i=",i," and j=", j, " and k=",k)
-      # }
-      # 
-      # if(optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_quadratic){
-      #   optimized_likelihood_aai_15_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
-      #   optimized_parameters_aai_15_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
-      #   message("correction achieved for aai_15_control population and i=",i," and j=", j, " and k=",k)
-      # }
-      # 
-      # if(optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_quadratic){
-      #   optimized_likelihood_aai_30_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
-      #   optimized_parameters_aai_30_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
-      #   message("correction achieved for aai_30_control population and i=",i," and j=", j, " and k=",k)
-      # }
+      if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_quadratic){
+        optimized_likelihood_aai_5_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
+        optimized_parameters_aai_5_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
+        message("correction achieved for aai_5_inf population and i=",i," and j=", j, " and k=", k)
+      }
+
+      if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_quadratic){
+        optimized_likelihood_aai_15_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
+        optimized_parameters_aai_15_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
+        message("correction achieved for aai_15_inf population and i=",i," and j=", j, " and k=", k)
+      }
+
+      if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_quadratic){
+        optimized_likelihood_aai_30_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
+        optimized_parameters_aai_30_inf_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
+        message("correction achieved for aai_30_inf population and i=",i," and j=", j, " and k=", k)
+      }
+
+      if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_quadratic){
+        optimized_likelihood_aai_5_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
+        optimized_parameters_aai_5_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
+        message("correction achieved for aai_5_exp population and i=",i," and j=", j, " and k=", k)
+      }
+
+      if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_quadratic){
+        optimized_likelihood_aai_15_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
+        optimized_parameters_aai_15_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
+        message("correction achieved for aai_15_exp population and i=",i," and j=", j, " and k=", k)
+      }
+
+      if(optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_quadratic){
+        optimized_likelihood_aai_30_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
+        optimized_parameters_aai_30_exp_quadratic <- optim(par = c(k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
+        message("correction achieved for aai_30_exp population and i=",i," and j=", j, " and k=", k)
+      }
+      ###control
+      if(optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_quadratic){
+        optimized_likelihood_aai_5_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
+        optimized_parameters_aai_5_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
+        message("correction achieved for aai_5_control population and i=",i," and j=", j, " and k=",k)
+      }
+
+      if(optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_quadratic){
+        optimized_likelihood_aai_15_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
+        optimized_parameters_aai_15_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
+        message("correction achieved for aai_15_control population and i=",i," and j=", j, " and k=",k)
+      }
+
+      if(optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_quadratic){
+        optimized_likelihood_aai_30_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
+        optimized_parameters_aai_30_control_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
+        message("correction achieved for aai_30_control population and i=",i," and j=", j, " and k=",k)
+      }
       
       if(optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value < optimized_likelihood_uninfected_quadratic){
         optimized_likelihood_uninfected_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value
@@ -318,60 +318,60 @@ for (i in const_initial) {
         message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k)
       }
       for (l in cubic_initial) {
-        # if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_cubic){
-        #   optimized_likelihood_aai_5_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
-        #   optimized_parameters_aai_5_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
-        #   message("correction achieved for aai_5_inf population and i=",i," and j=", j, " and k=", k, "and l=", l)
-        # }
-        # 
-        # if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_cubic){
-        #   optimized_likelihood_aai_15_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
-        #   optimized_parameters_aai_15_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
-        #   message("correction achieved for aai_15_inf population and i=",i," and j=", j, " and k=", k, "and l=", l)
-        # }
-        # 
-        # if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_cubic){
-        #   optimized_likelihood_aai_30_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
-        #   optimized_parameters_aai_30_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
-        #   message("correction achieved for aai_30_inf population and i=",i," and j=", j, " and k=", k, "and l=", l)
-        # }
-        # 
-        # if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_cubic){
-        #   optimized_likelihood_aai_5_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
-        #   optimized_parameters_aai_5_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
-        #   message("correction achieved for aai_5_exp population and i=",i," and j=", j, " and k=", k, "and l=", l)
-        # }
-        # 
-        # if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_cubic){
-        #   optimized_likelihood_aai_15_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
-        #   optimized_parameters_aai_15_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
-        #   message("correction achieved for aai_15_exp population and i=",i," and j=", j, " and k=", k, "and l=", l)
-        # }
-        # 
-        # if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_cubic){
-        #   optimized_likelihood_aai_30_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
-        #   optimized_parameters_aai_30_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
-        #   message("correction achieved for aai_30_exp population and i=",i," and j=", j, " and k=", k, "and l=", l)
-        # }
-        # 
-        # ###control
-        # if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_cubic){
-        #   optimized_likelihood_aai_5_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
-        #   optimized_parameters_aai_5_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
-        #   message("correction achieved for aai_5_control population and i=",i," and j=", j, " and k=",k," and l=",l)
-        # }
-        # 
-        # if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_cubic){
-        #   optimized_likelihood_aai_15_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
-        #   optimized_parameters_aai_15_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
-        #   message("correction achieved for aai_15_control population and i=",i," and j=", j, " and k=",k," and l=",l)
-        # }
-        # 
-        # if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_cubic){
-        #   optimized_likelihood_aai_30_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
-        #   optimized_parameters_aai_30_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
-        #   message("correction achieved for aai_30_control population and i=",i," and j=", j, " and k=",k," and l=",l)
-        # }
+        if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_cubic){
+          optimized_likelihood_aai_5_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
+          optimized_parameters_aai_5_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
+          message("correction achieved for aai_5_inf population and i=",i," and j=", j, " and k=", k, "and l=", l)
+        }
+
+        if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_cubic){
+          optimized_likelihood_aai_15_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
+          optimized_parameters_aai_15_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
+          message("correction achieved for aai_15_inf population and i=",i," and j=", j, " and k=", k, "and l=", l)
+        }
+
+        if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_cubic){
+          optimized_likelihood_aai_30_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
+          optimized_parameters_aai_30_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
+          message("correction achieved for aai_30_inf population and i=",i," and j=", j, " and k=", k, "and l=", l)
+        }
+
+        if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_cubic){
+          optimized_likelihood_aai_5_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
+          optimized_parameters_aai_5_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
+          message("correction achieved for aai_5_exp population and i=",i," and j=", j, " and k=", k, "and l=", l)
+        }
+
+        if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_cubic){
+          optimized_likelihood_aai_15_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
+          optimized_parameters_aai_15_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
+          message("correction achieved for aai_15_exp population and i=",i," and j=", j, " and k=", k, "and l=", l)
+        }
+
+        if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_cubic){
+          optimized_likelihood_aai_30_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
+          optimized_parameters_aai_30_exp_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
+          message("correction achieved for aai_30_exp population and i=",i," and j=", j, " and k=", k, "and l=", l)
+        }
+
+        ###control
+        if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_cubic){
+          optimized_likelihood_aai_5_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
+          optimized_parameters_aai_5_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
+          message("correction achieved for aai_5_control population and i=",i," and j=", j, " and k=",k," and l=",l)
+        }
+
+        if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_cubic){
+          optimized_likelihood_aai_15_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
+          optimized_parameters_aai_15_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
+          message("correction achieved for aai_15_control population and i=",i," and j=", j, " and k=",k," and l=",l)
+        }
+
+        if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_cubic){
+          optimized_likelihood_aai_30_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
+          optimized_parameters_aai_30_control_cubic <- optim(par = c(l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
+          message("correction achieved for aai_30_control population and i=",i," and j=", j, " and k=",k," and l=",l)
+        }
         
         if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value < optimized_likelihood_uninfected_cubic){
           optimized_likelihood_uninfected_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value
@@ -385,60 +385,60 @@ for (i in const_initial) {
         }
         
         for (m in quartic_initial) {
-          # if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_quartic){
-          #   optimized_likelihood_aai_5_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
-          #   optimized_parameters_aai_5_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
-          #   message("correction achieved for aai_5_inf population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
-          # }
-          # 
-          # if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_quartic){
-          #   optimized_likelihood_aai_15_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
-          #   optimized_parameters_aai_15_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
-          #   message("correction achieved for aai_15_inf population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
-          # }
-          # 
-          # if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_quartic){
-          #   optimized_likelihood_aai_30_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
-          #   optimized_parameters_aai_30_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
-          #   message("correction achieved for aai_30_inf population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
-          # }
-          # 
-          # if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_quartic){
-          #   optimized_likelihood_aai_5_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
-          #   optimized_parameters_aai_5_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
-          #   message("correction achieved for aai_5_exp population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
-          # }
-          # 
-          # if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_quartic){
-          #   optimized_likelihood_aai_15_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
-          #   optimized_parameters_aai_15_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
-          #   message("correction achieved for aai_15_exp population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
-          # }
-          # 
-          # if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_quartic){
-          #   optimized_likelihood_aai_30_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
-          #   optimized_parameters_aai_30_exp_quartic<- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
-          #   message("correction achieved for aai_30_exp population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
-          # }
-          # 
-          # ###control
-          # if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_quartic){
-          #   optimized_likelihood_aai_5_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
-          #   optimized_parameters_aai_5_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
-          #   message("correction achieved for aai_5_control population and i=",i," and j=", j, " and k=",k," and l=",l," and m=",m)
-          # }
-          # 
-          # if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_quartic){
-          #   optimized_likelihood_aai_15_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
-          #   optimized_parameters_aai_15_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
-          #   message("correction achieved for aai_15_control population and i=",i," and j=", j, " and k=",k," and l=",l," and m=",m)
-          # }
-          # 
-          # if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_quartic){
-          #   optimized_likelihood_aai_30_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
-          #   optimized_parameters_aai_30_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
-          #   message("correction achieved for aai_30_control population and i=",i," and j=", j, " and k=",k," and l=",l," and m=",m)
-          # }
+          if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_quartic){
+            optimized_likelihood_aai_5_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
+            optimized_parameters_aai_5_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$par
+            message("correction achieved for aai_5_inf population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
+          }
+
+          if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value < optimized_likelihood_aai_15_inf_quartic){
+            optimized_likelihood_aai_15_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$value
+            optimized_parameters_aai_15_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_inf, age_at_infection = 15)$par
+            message("correction achieved for aai_15_inf population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
+          }
+
+          if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value < optimized_likelihood_aai_30_inf_quartic){
+            optimized_likelihood_aai_30_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$value
+            optimized_parameters_aai_30_inf_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_inf, age_at_infection = 30)$par
+            message("correction achieved for aai_30_inf population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
+          }
+
+          if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value < optimized_likelihood_aai_5_exp_quartic){
+            optimized_likelihood_aai_5_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$value
+            optimized_parameters_aai_5_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_exp, age_at_infection = 5)$par
+            message("correction achieved for aai_5_exp population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
+          }
+
+          if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value < optimized_likelihood_aai_15_exp_quartic){
+            optimized_likelihood_aai_15_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$value
+            optimized_parameters_aai_15_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_15_exp, age_at_infection = 15)$par
+            message("correction achieved for aai_15_exp population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
+          }
+
+          if(optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value < optimized_likelihood_aai_30_exp_quartic){
+            optimized_likelihood_aai_30_exp_quartic <- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$value
+            optimized_parameters_aai_30_exp_quartic<- optim(par = c(m, l, k, j, i), fn=likelihood_general, longevity = longevity_aai_30_exp, age_at_infection = 30)$par
+            message("correction achieved for aai_30_exp population and i=",i," and j=", j, " and k=", k, "and l=", l, " and m=", m)
+          }
+
+          ###control
+          if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value < optimized_likelihood_aai_5_control_quartic){
+            optimized_likelihood_aai_5_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$value
+            optimized_parameters_aai_5_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 5)$par
+            message("correction achieved for aai_5_control population and i=",i," and j=", j, " and k=",k," and l=",l," and m=",m)
+          }
+
+          if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value < optimized_likelihood_aai_15_control_quartic){
+            optimized_likelihood_aai_15_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$value
+            optimized_parameters_aai_15_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 15)$par
+            message("correction achieved for aai_15_control population and i=",i," and j=", j, " and k=",k," and l=",l," and m=",m)
+          }
+
+          if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value < optimized_likelihood_aai_30_control_quartic){
+            optimized_likelihood_aai_30_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$value
+            optimized_parameters_aai_30_control_quartic <- optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = host_longevity_control, age_at_infection = 30)$par
+            message("correction achieved for aai_30_control population and i=",i," and j=", j, " and k=",k," and l=",l," and m=",m)
+          }
           
           if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value < optimized_likelihood_uninfected_quartic){
             optimized_likelihood_uninfected_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value
@@ -789,15 +789,15 @@ lines(x = age_axis[16:lifetime_threshold], y = survival_model(delta = delta(age 
 # Cubic model
 lines(x = age_axis[16:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[16:lifetime_threshold], parameters = optimized_parameters_exposed_cubic), x = age_axis)[1:135], col = "blue")
 # Quartic model
-par_trial <- c(9.2e-09, -1.577257e-06,  8.363635e-05, -1.362067e-03,  6.867880e-03)
+#par_trial <- c(9.2e-09, -1.577257e-06,  8.363635e-05, -1.362067e-03,  6.867880e-03)
 lines(x = age_axis[16:lifetime_threshold], y = survival_model(delta = delta(age = age_axis[16:lifetime_threshold], parameters = optimized_parameters_exposed_quartic), x = age_axis)[1:135], col = "red")
 legend(90,1, legend = c("Data", 'Linear model', "Quadratic model", "Cubic model", "4th order polynomial model"), col = c("black", "yellow", "green", "blue", "red"), lty = 1, cex = 0.8)
 dev.off()
 
-optimized_likelihood_exposed_quartic
-likelihood_general(parameters = par_trial, longevity = longevity_exposed, age_at_infection = 16)
-optim_trial <- optim(par =optim_, fn = likelihood_general, longevity = longevity_exposed, age_at_infection = 16)
-optim_trial$value
+#optimized_likelihood_exposed_quartic
+#likelihood_general(parameters = par_trial, longevity = longevity_exposed, age_at_infection = 16)
+#optim_trial <- optim(par =optim_, fn = likelihood_general, longevity = longevity_exposed, age_at_infection = 16)
+#optim_trial$value
 # likelihood_general returns -log_likelihood, therefore we are searching for the minimum of the value, optimizer 
 # basically succeeded, is our likelihood alright?
 
@@ -902,3 +902,8 @@ expected_sample_sizes
   # try better optimizer (bblme4,optimx)
 ### We could try fitting with Weibull, maybe each step in the survival individualy (so combination of two Weibul distributions),
   # or combination of two quadratic functions
+### Likelihood hopefully corrected, try running the whole optimization and check the control plots
+### (perhaps go back to optimizing even over the first 16 years with the uninfected and whole exposed population)
+### Consider computing virulence since the time of castration and check that we dont include
+  # in the exposed/infected population the individuals who died within 7 days after the exposure 
+  # (infection status could not be verified so soon after exposure)
