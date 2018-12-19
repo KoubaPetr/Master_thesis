@@ -73,6 +73,12 @@ Succesive discussion with Roland: Think of how to express the deathrate of infec
 -Try hypothesis testing to show virulence significantly depends on age at infection
 -Read the papers from Frida and respond her
 
+Meeting with Roland 18th of December
+- to compare the virulences, we can also have a look into the log-rank test, but we should not rely on it blindly, since it might be different (survival analysis is dealing with slightly different cases)
+- we should however try to compare the virulences using the Likelihood Ratio Test, use the baseline deathrate (from the control or uninfected population) add an quadratic Ansatz (for virulence) and fit it to the whole infected population, obtain one (or one set of) parameter, then repeat it for different age at infection groups, each yielding its own parameter (or set of parameters) and use LRT to account for the additional degree(s) of freedom, whether the difference is significant
+- Continue writing the reports throughout the work, maybe try to write down everything formally straigt away, so it could be the final product already, finishing the thesis around middle of May is alright
+-write abstract for prof. Sigrist and register for the thesis in mystudies
+
 
 
 

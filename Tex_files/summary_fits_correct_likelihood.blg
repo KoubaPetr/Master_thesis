@@ -1,0 +1,50 @@
+This is BibTeX, Version 0.99d (TeX Live 2017/Debian)
+Capacity: max_strings=100000, hash_size=100000, hash_prime=85009
+The top-level auxiliary file: summary_fits_correct_likelihood.aux
+The style file: unsrtnat.bst
+Database file #1: bibliography_SIE_model.bib
+Warning--empty journal in likelihood
+Warning--empty year in likelihood
+Warning--empty year in likelihood
+You've used 1 entry,
+            2481 wiz_defined-function locations,
+            555 strings with 4585 characters,
+and the built_in function-call counts, 304 in all, are:
+= -- 22
+> -- 7
+< -- 1
++ -- 4
+- -- 2
+* -- 19
+:= -- 54
+add.period$ -- 3
+call.type$ -- 1
+change.case$ -- 2
+chr.to.int$ -- 1
+cite$ -- 4
+duplicate$ -- 18
+empty$ -- 29
+format.name$ -- 3
+if$ -- 56
+int.to.chr$ -- 1
+int.to.str$ -- 2
+missing$ -- 1
+newline$ -- 13
+num.names$ -- 3
+pop$ -- 13
+preamble$ -- 1
+purify$ -- 1
+quote$ -- 0
+skip$ -- 10
+stack$ -- 0
+substring$ -- 2
+swap$ -- 1
+text.length$ -- 0
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 7
+warning$ -- 3
+while$ -- 2
+width$ -- 0
+write$ -- 18
+(There were 3 warnings)

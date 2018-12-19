@@ -1,6 +1,6 @@
 #Debugging likelihoog
 
-library(foreign)   #to read the spss file
+require(foreign)   #to read the spss file
 
 #Daphnia cannot live longer than 200 days (in our data not even longer than 123)
 lifetime_threshold = 150
@@ -24,6 +24,13 @@ delta <- function(parameters, age){
   return (local_delta)
 }
 
+delta_weibull <- function(parameters, age){
+  k <- parameters[1]
+  lambda <- parameters[2]
+  return(k/lambda * (age/lambda)^(k-1))
+  
+}
+
 #Reading the data -----------------------------------------------------------------------
 dataset <- read.spss("/home/petr/Documents/Master_thesis/AgeEffectsVirulence.sav", to.data.frame = TRUE, use.value.labels = FALSE)
 parasyte <- as.character(dataset$Pasteuria)
@@ -31,80 +38,105 @@ infecteds <- as.numeric(dataset$Infected)
 aai <- as.numeric(dataset$InfectionAge)
 
 exposed_population <- dataset[(infecteds == 0) & (parasyte != "Control "),]
-longevity_exposed <- exposed_population$HostLongevity
-
+longevity_exposed <- as.numeric(exposed_population$HostLongevity)
 survivals_exposed <- rep(0,lifetime_threshold+1)
 
 for (x in age_axis) {
   survivals_exposed[x+1] <- sum(longevity_exposed>x)/length(longevity_exposed)
 }
 
-### log likelihood
-likelihood_general <- function(parameters, longevity, age_at_infection){
-  likelihood_local <- 0
-  if(min(delta(parameters, age_axis))>=0){
-    for (d in longevity) {
-      for (j in 1:d) {
-        likelihood_local <- likelihood_local - sum(delta(parameters, age_axis[age_at_infection:j])) #instead of delta put in the right probability of dying at age longevity[i]
-        
-      }
-      likelihood_local <- likelihood_local + log(delta(parameters,d))
-    }
-    
-  }else{
-    likelihood_local <- -Inf
-  }
-  
-  return(-likelihood_local) #optim is minimizing, so we return sign flipped value to get maximization #consider adding the binomial factor to have absolute likelihood,
-  #keep in mind the different ages of infections which play role
-}
+### log likelihood TODO: Rewrite the second cycle analytically
+# likelihood_subroutine <- function(par, d, a){
+#   return(- sum(1:(d-a) * delta(par, (a-1):(d-1))) + log(delta(par,d)))
+# }
 
+ likelihood_general <- function(p, longevity, age_at_infection){
+   likelihood_local <- 0
+   if(min(delta(parameters = p, age_axis))>=0){
+     for (d in longevity) {
+       likelihood_local <- likelihood_local -sum(delta(parameters = p,(age_at_infection-1):d)) + log(delta(parameters = p, d))
+       #likelihood_local <- likelihood_local - sum(1:(d-age_at_infection) * delta(parameters, (age_at_infection-1):(d-1))) + log(delta(parameters,d))
+       #sum(sapply(longevity, likelihood_subroutine, par = parameters, a = age_at_infection))#}
+     }
+   }else{
+     likelihood_local <- -Inf
+   }
+
+   return(-likelihood_local) #optim is minimizing, so we return sign flipped value to get maximization #consider adding the binomial factor to have absolute likelihood,
+   #keep in mind the different ages of infections which play role
+ }
+
+
+
+start <- Sys.time()
 #### Optimization
 optimized_likelihood_exposed_quartic <- Inf
 
 const_initial = c(0.1,0.001,0.00001)
+#const_initial = c(0.00001)
 lin_initial = c(0.1,0.001,0.00001)
+#lin_initial = c(0.00001)
 quadrat_initial = c(0.01,0.0001,0.000001)
+#quadrat_initial = c(0.000001)
 cubic_initial = c(0.0001,0.000001,0.00000001)
+#cubic_initial = c(0.00000001)
 quartic_initial = c(0.00001,0.0000001,0.000000001)
+#quartic_initial = c(0.000000001)
 
-for (i in const_initial) {
-  
-  for (j in lin_initial){
-  
-    # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_linear){
-    #   optimized_likelihood_exposed_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
-    #   optimized_parameters_exposed_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
-    #   message("correction achieved for uninfected population and i=",i," and j=", j)
-    # }
-    
-    for (k in quadrat_initial) {
-      
-      # if(optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_quadratic){
-      #   optimized_likelihood_exposed_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
-      #   optimized_parameters_exposed_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
-      #   message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k)
-      # }
-      for (l in cubic_initial) {
-        
-        # if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_cubic){
-        #   optimized_likelihood_exposed_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
-        #   optimized_parameters_exposed_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
-        #   message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k," and l=",l)
-        # }
-        
-        for (m in quartic_initial) {
-          
-          if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_quartic){
-            optimized_likelihood_exposed_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
-            optimized_parameters_exposed_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
-            message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k," and l=",l, " and m=",m)
-          }
-        }
-      }
-    }
-  }
-}
+
+# # weibull optimization
+# optimized_likelihood_exposed_weib <- Inf
+# 
+# for (i in 1:9) {
+#   for (j in 1:9) {
+#     
+#     if(optim(par = c(10^(i-1),10^(j-1)), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_weib){
+#             optimized_likelihood_exposed_weib <- optim(par = c(10^(i-1),10^(j-1)), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
+#             optimized_parameters_exposed_weib <- optim(par = c(10^(i-1),10^(j-1)), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
+#             message("correction achieved for uninfected population and k= ",i," and lambda= ", j)
+#           }
+#   }
+# }
+
+
+
+ for (i in const_initial) {
+
+   for (j in lin_initial){
+
+     # if(optim(par = c(j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_linear){
+     #   optimized_likelihood_exposed_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
+     #   optimized_parameters_exposed_linear <- optim(par = c(j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
+     #   message("correction achieved for uninfected population and i=",i," and j=", j)
+     # }
+
+     for (k in quadrat_initial) {
+
+       # if(optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_quadratic){
+       #   optimized_likelihood_exposed_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
+       #   optimized_parameters_exposed_quadratic <- optim(par = c(k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
+       #   message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k)
+       # }
+       for (l in cubic_initial) {
+
+         # if(optim(par = c(l,k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_cubic){
+         #   optimized_likelihood_exposed_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
+         #   optimized_parameters_exposed_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
+         #   message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k," and l=",l)
+         # }
+
+         for (m in quartic_initial) {
+
+           if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value < optimized_likelihood_exposed_quartic){
+             optimized_likelihood_exposed_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$value
+             optimized_parameters_exposed_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 1)$par
+             message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k," and l=",l, " and m=",m)
+           }
+         }
+       }
+     }
+   }
+ }
 
 #### Survival model
 survival_model <- function(delta, x = age_axis){
@@ -114,13 +146,25 @@ survival_model <- function(delta, x = age_axis){
   }
   return(exp(exponent))
 }
-
+stop <- Sys.time()
+stop - start
+optimized_parameters_exposed_quartic
 #### PLotting
 
+#likelihood_fitting_since_age_16 <- optimized_likelihood_exposed_quartic
+likelihood_fitting_since_age_16
+likelihood_fitting_since_age_1
+
 plot(x = age_axis, y = survivals_exposed, xlab = "Age [Days]", ylab = "Survival_Exposed", type = "s", lwd =2)
-lines(x = age_axis, y = survival_model(delta = delta(age = age_axis, parameters = optimized_parameters_exposed_quartic), x = age_axis), col = "red")
+lines(x = age_axis, y = survival_model(delta = delta(parameters = optimized_parameters_exposed_quartic, age = age_axis), x = age_axis), col = "red")
 legend(90,1, legend = c("Data", "4th order polynomial model"), col = c("black", "red"), lty = 1, cex = 0.8)
-text(50, 0.4, "sum(sum(sum())+log())")
+text(50, 0.4, "version fitting since age 1, alive till d")
 
+# plot(x = age_axis, y = survivals_exposed, xlab = "Age [Days]", ylab = "Survival_Exposed", type = "s", lwd =2)
+# lines(x = age_axis, y = survival_model(delta = delta_weibull(parameters = optimized_parameters_exposed_weib, age = age_axis), x = age_axis), col = "red")
+# legend(90,1, legend = c("Data", "weibull model"), col = c("black", "red"), lty = 1, cex = 0.8)
+# plot(delta_weibull(optimized_parameters_exposed_weib, age = age_axis))
 
-### The current version of likelihood has been the most successful, try different likelihood tho! (do it stricly binomially?)
+#TODO:
+# weibull hazard is polynomial, so it is probably useless, we can probably stick with the current delta
+# implement the current likelihood into the main code
