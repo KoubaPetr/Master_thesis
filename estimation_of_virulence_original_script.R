@@ -1,6 +1,3 @@
-#Libraries
-library(foreign)   #to read the spss file
-
 #Daphnia cannot live longer than 200 days (in our data not even longer than 123)
 lifetime_threshold = 150
 
@@ -11,7 +8,7 @@ age_of_inf_15_axis <- c(0: (lifetime_threshold-15))
 age_of_inf_30_axis <- c(0: (lifetime_threshold-30))
 
 #Our polynomial Ansatz for delta---------------------------------------------------------
-delta <- function(parameters, age){
+delta <- function(parameters, age, par_fixed = NULL){
   local_delta <- 0
   if(length(parameters) == 2){
     local_delta <- parameters[1]*age + parameters[2]
@@ -28,25 +25,43 @@ delta <- function(parameters, age){
 }
 
 #Ansatz for delta to fit virulence directly, provided natural deathrate -----------------
-
-delta_inf <- function(par, a) {
-  if (length(par) == 1) {
-    return(par * a ^ 2)
-    
-  } else if (length(par) == 2) {
-    return(par[1] * a ^ 2 + par[2] * a) # also think about trying ansatz a^2 + const
-    
-  } else if (length(par) == 3) {
-    return(par[1] * a ^ 2 + par[2] * a + par[3])
-    
-  } else{
-    message("delta_inf was fed with invalid parameters")
-    
+#TODO: use optimize, instead optim for one dimensional optimization?
+delta_inf <- function(parameters, par_fixed = optimized_parameters_uninfected_quartic, age) {
+  # if (length(par) == 1) {
+  #   return( sum(par_fixed * c(a^4,a^3,a^2,a,1)) + par * a ^ 2) # figure out how to treat this case (with the optimize function probably)
+  #   
+  # } else 
+  if(length(par_fixed) == 5){
+    if (length(parameters) == 2) {
+      return( par_fixed[1] * age^4 + par_fixed[2] *  age^3 + par_fixed[3] * age^2 + par_fixed[4] * age + par_fixed[5] + parameters[1] * age^ 2 + parameters[2] * age) # also think about trying ansatz a^2 + const
+      
+    } else if (length(parameters) == 3) {
+      return( par_fixed[1] * age^4 + par_fixed[2] *  age^3 + par_fixed[3] * age^2 + par_fixed[4] * age + par_fixed[5] + parameters[1] * age ^ 2 + parameters[2] * age + parameters[3])
+      
+    } else{
+      message("delta_inf was fed with invalid parameters=",parameters," length of parameters = ", length(parameters))
+      
+    }
+  }else if(length(par_fixed) == 3){
+    if (length(parameters) == 2) {
+      return( par_fixed[1] * age^2 + par_fixed[2] *  age + par_fixed[3] + parameters[1] * age^ 2 + parameters[2] * age) # also think about trying ansatz a^2 + const
+      
+    } else if (length(parameters) == 3) {
+      return( par_fixed[1] * age^2 + par_fixed[2] *  age + par_fixed[3] + parameters[1] * age ^ 2 + parameters[2] * age + parameters[3])
+      
+    } else{
+      message("delta_inf was fed with invalid parameters=",parameters," length of parameters = ", length(parameters))
+      
+    }
+  }else{
+    message("delta_inf is not adapted for this length of par_fixed")
   }
+  
 }
 
-
 #Reading the data -----------------------------------------------------------------------
+require(foreign)   #to read the spss file
+
 dataset <- read.spss("/home/petr/Documents/Master_thesis/AgeEffectsVirulence.sav", to.data.frame = TRUE, use.value.labels = FALSE)
 parasyte <- as.character(dataset$Pasteuria)
 infecteds <- as.numeric(dataset$Infected)
@@ -69,6 +84,7 @@ longevity_aai_30_exp <- dataset[infecteds == 0 & aai == 30,]$HostLongevity
 
 longevity_uninfected <- c(host_longevity_control, longevity_aai_5_exp, longevity_aai_15_exp, longevity_aai_30_exp)
 longevity_exposed <- c(longevity_aai_5_exp, longevity_aai_15_exp, longevity_aai_30_exp)
+longevity_infected <- infected_population$HostLongevity
 
 #Survivals of the control, infected and exposed populations ---------------------------------------
 survivals_aai_5_inf <- rep(0,lifetime_threshold+1)
@@ -82,6 +98,7 @@ survivals_aai_15_control <- rep(0,lifetime_threshold+1)
 survivals_aai_30_control <- rep(0,lifetime_threshold+1)
 survivals_uninfected <- rep(0,lifetime_threshold+1)
 survivals_exposed <- rep(0,lifetime_threshold+1)
+survivals_infected <- rep(0,lifetime_threshold +1)
 
 for (x in 0:lifetime_threshold) {
   survivals_aai_5_inf[x+1] <- sum(longevity_aai_5_inf>x)/ length(longevity_aai_5_inf)
@@ -100,6 +117,7 @@ for (x in 4:lifetime_threshold){
 
 for (x in 14:lifetime_threshold){
   survivals_aai_15_control[x+1] <- sum(host_longevity_control>x)/ sum(host_longevity_control>15)
+  survivals_infected[x+1] <- sum(longevity_infected>x)/ sum(longevity_infected>15)
 }
 
 for (x in 29:lifetime_threshold) {
@@ -112,11 +130,11 @@ for (x in 29:lifetime_threshold) {
 # log likelihood------
 #Likelihood function (log_likelihood) = log(Pruduct over individuals (Product over timesteps(probability of dying in that timestep))) -> log turns pruducts to sums
 
-likelihood_general <- function(p, longevity, age_at_infection){
+likelihood_general <- function(p, longevity, age_at_infection, ansatz = delta, parameters_fixed = NULL){
   likelihood_local <- 0
-  if(min(delta(parameters = p, age_axis))>=0){
+  if(min(ansatz(parameters = p, age_axis, par_fixed = parameters_fixed))>=0){
     for (d in longevity) {
-      likelihood_local <- likelihood_local -sum(delta(parameters = p,(age_at_infection-1):d)) + log(delta(parameters = p, d))
+      likelihood_local <- likelihood_local -sum(ansatz(parameters = p,(age_at_infection-1):d, par_fixed = parameters_fixed)) + log(ansatz(parameters = p, d, par_fixed = parameters_fixed))
       #likelihood_local <- likelihood_local - sum(1:(d-age_at_infection) * delta(parameters, (age_at_infection-1):(d-1))) + log(delta(parameters,d))
       #sum(sapply(longevity, likelihood_subroutine, par = parameters, a = age_at_infection))#}
     }
@@ -212,7 +230,7 @@ optimized_likelihood_exposed_quartic <- Inf
 counter <- 0
 
 start_timer <- Sys.time()
-  
+
 for (i in const_initial) {
   
   for (j in lin_initial){
@@ -388,6 +406,8 @@ for (i in const_initial) {
       #   message("correction achieved for uninfected population and i=",i," and j=", j," and k=", k)
       # }
       
+      
+      
       for (l in cubic_initial) {
         # if(optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value < optimized_likelihood_aai_5_inf_cubic){
         #   optimized_likelihood_aai_5_inf_cubic <- optim(par = c(l, k, j, i), fn=likelihood_general, longevity = longevity_aai_5_inf, age_at_infection = 5)$value
@@ -529,11 +549,11 @@ for (i in const_initial) {
           #   message("correction achieved for aai_30_control population and i=",i," and j=", j, " and k=",k," and l=",l," and m=",m)
           # }
           # 
-          if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value < optimized_likelihood_uninfected_quartic){
-            optimized_likelihood_uninfected_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value
-            optimized_parameters_uninfected_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$par
-            message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k," and l=",l, " and m=",m)
-          }
+          # if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value < optimized_likelihood_uninfected_quartic){
+          #   optimized_likelihood_uninfected_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$value
+          #   optimized_parameters_uninfected_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_uninfected, age_at_infection = 16)$par
+          #   message("correction achieved for uninfected population and i=",i," and j=", j, "and k=",k," and l=",l, " and m=",m)
+          # }
           # if(optim(par = c(m,l,k,j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 16)$value < optimized_likelihood_exposed_quartic){
           #   optimized_likelihood_exposed_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 16)$value
           #   optimized_parameters_exposed_quartic <- optim(par = c(m,l, k, j, i), fn=likelihood_general, longevity = longevity_exposed, age_at_infection = 16)$par
@@ -568,6 +588,55 @@ for (i in const_initial) {
 stop_timer <- Sys.time()
 
 ### deleted the rest below the optimization cycles, if needed check the original script for reference, only survival_model() kept
+######################## Optimization of virulence -------------------------------------------------
+
+optimized_likelihood_virulence_quadratic_pure <- Inf
+optimized_likelihood_virulence_quadratic_linear <- Inf
+optimized_likelihood_virulence_quadratic_linear_const <- Inf
+
+const_initial_virulence <- c(1,0.01,0.0001,0.000001,0.00000001, 0.0000000001)
+lin_initial_virulence <- c(1,0.01,0.0001,0.000001,0.00000001, 0.0000000001)
+quadratic_initial_virulence <- c(1,0.01,0.0001,0.000001,0.00000001, 0.0000000001)
+
+start_virulence <- Sys.time()
+
+for (i in quadratic_initial_virulence) {
+  
+  #fitting whole infected population
+  # if(optim(par = i, fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$value < optimized_likelihood_virulence_quadratic_pure){
+  #   optimized_likelihood_virulence_quadratic_pure <- optim(par = i, fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$value
+  #   optimized_parameters_virulence_quadratic_pure <- optim(par = i, fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$par
+  #   message("correction achieved for whole infected population pure quadratic virulence and i=",i)
+  # }
+  
+  for (j in lin_initial_virulence) {
+    
+    #fitting whole infected population
+    if(optim(par = c(i,j), fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$value < optimized_likelihood_virulence_quadratic_linear){
+      optimized_likelihood_virulence_quadratic_linear <- optim(par = c(i,j), fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$value
+      optimized_parameters_virulence_quadratic_linear <- optim(par = c(i,j), fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$par
+      message("correction achieved for whole infected population quadratic-linear virulence and i=",i, " and j=",j)
+    }
+    
+    for (k in const_initial_virulence) {
+      
+      if(optim(par = c(i,j,k), fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$value < optimized_likelihood_virulence_quadratic_linear_const){
+        optimized_likelihood_virulence_quadratic_linear_const <- optim(par = c(i,j,k), fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$value
+        optimized_parameters_virulence_quadratic_linear_const <- optim(par = c(i,j,k), fn=likelihood_general, longevity = longevity_infected, age_at_infection = 16, ansatz = delta_inf, parameters_fixed = optimized_parameters_uninfected_quartic)$par
+        message("correction achieved for whole infected population quadratic-linear virulence and i=",i, " and j=",j)
+      }
+    }
+    
+  }
+  
+}
+
+optimized_parameters_virulence_quadratic_linear_const
+stop_virulence <- Sys.time()
+
+print("The time duration of the optimization of virulence was:")
+stop_virulence - start_virulence
+
 #### Survival model -------------------------------------------------------------
 survival_model <- function(delta, x = age_axis){
   exponent <- c(rep(0,length(x)))
@@ -799,6 +868,17 @@ legend("bottomleft", legend = c("Quartic model exposed", "Quartic model control"
 
 
 ### Control plots ---------------------------------------------------------------------------------------------------------------------------
+### Control plot for virulence fitting --------------
+
+# control of the fit for the whole infected population, fit with 3 parameters for virulence (quadratic, linear and cosntant term)
+plot(x = age_axis[16:(lifetime_threshold+1)], y = survivals_infected[15:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Infected (virulence fit)", type = "s", lwd =2)
+lines(x = age_axis[16:(lifetime_threshold+1)], y = survival_model(delta = delta_inf(age = age_axis[0:(lifetime_threshold-15)], parameters = optimized_parameters_virulence_quadratic_linear
+                                                                                    ,par_fixed = optimized_parameters_uninfected_quartic), x = age_axis)[1:136], col = "blue")
+legend(90,1, legend = c("Data", "2 parameters", "3 parameters"), col = c("black", "blue", 'green'), lwd = c(1,1,1), cex = 0.8)
+### TODO !!!! FIGURE OUT WHY THE FIT DOESNT MATCH
+
+
+
 ## AaI = 5, inf --------------------------------------------------------------------------------------------------
 pdf("Fitting_delta_inf_at_age_5.pdf")
 plot(x = age_axis[5:lifetime_threshold], y = survivals_aai_5_inf[5:lifetime_threshold], xlab = "Age [Days]", ylab = "Survival_Infected_At_Age=5")
@@ -985,11 +1065,6 @@ text(47,0.15, labels = "97", cex = 0.7, col = "red")
 text(55,0.15, labels = "27", cex = 0.7, col = 'green')
 text(65,0.15, labels = "14", cex = 0.7, col = 'blue')
 dev.off()
-
-# TODO ------
-# Repeat LRT tests for the fits relevant for computation of virulence for different ages at infection (inf_5, inf_15, inf_30, uninf_5, uninf_15, uninf_30) - Done, its ok
-# Compute the virulence as a function of age OF infection for aai_5, aai_15, aai_30
-# Try to prove a significant difference
 
 
 ### Plot susceptibility dependence on the age at infection --------------------------------------------------

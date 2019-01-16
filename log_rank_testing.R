@@ -52,5 +52,5 @@ survdiff(surv_infected_at_5_or_30 ~ infected_at_5_or_30$InfectionAge)
 #         Maybe ask about this on stack exchange?
 #       Try the method using LRT, as discussed with Roland
 #       - think of different Ansatzes to be used, so far most of them implemented in delta_inf(), but ansatz a^2 + const,
-#         could also be of an interest
-
+#         could also be of an interest, maybe even a super quadratic Ansatz could be used? (in case the virulence is not just quadratic,
+#         but has some higher term that cancel with the higher terms in the natural mortality)

@@ -1,5 +1,5 @@
 The optimal parameters for the quartic fit of the uninfected population, fitted accross ages 16 to the maximum lifespan:
 Generated on:
-Wed Dec 19 14:06:47 2018
+Wed Dec 19 21:51:29 2018
 a^4 a^3 a^2 a const.
-5.993328e-09 -9.658061e-07 4.66458e-05 -0.000581853 0.002139531
+1.880862e-08 -7.431043e-06 0.0008323528 -0.02038497 0.1450681
